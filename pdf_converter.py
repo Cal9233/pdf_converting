@@ -7,45 +7,45 @@ import time
 import sys
 import threading
 
-class TransactionValidator:
-    """Enhanced validator for PDF transaction extraction accuracy"""
+# class TransactionValidator:
+#     """Enhanced validator for PDF transaction extraction accuracy"""
     
-    def __init__(self):
-        self.validation_results = {}
-        self.potential_missed = []
+#     def __init__(self):
+#         self.validation_results = {}
+#         self.potential_missed = []
         
-    def validate_extraction(self, pdf_path, extracted_data, statement_type):
-        """Main validation method that runs all checks"""
-        print(f"\n🔍 VALIDATING: {os.path.basename(pdf_path)}")
+#     def validate_extraction(self, pdf_path, extracted_data, statement_type):
+#         """Main validation method that runs all checks"""
+#         print(f"\n🔍 VALIDATING: {os.path.basename(pdf_path)}")
         
-        validation_result = {
-            'pdf_file': os.path.basename(pdf_path),
-            'statement_type': statement_type,
-            'extracted_count': len(extracted_data),
-            'potential_missed': [],
-            'amount_discrepancy': None,
-            'confidence_score': 0
-        }
+#         validation_result = {
+#             'pdf_file': os.path.basename(pdf_path),
+#             'statement_type': statement_type,
+#             'extracted_count': len(extracted_data),
+#             'potential_missed': [],
+#             'amount_discrepancy': None,
+#             'confidence_score': 0
+#         }
         
-        # Method 1: Count potential transaction lines in raw text
-        raw_count = self.count_potential_transactions_in_text(pdf_path, statement_type)
-        validation_result['estimated_total'] = raw_count
+#         # Method 1: Count potential transaction lines in raw text
+#         raw_count = self.count_potential_transactions_in_text(pdf_path, statement_type)
+#         validation_result['estimated_total'] = raw_count
         
-        # Method 2: Check for amount discrepancies
-        amount_check = self.validate_amounts(pdf_path, extracted_data, statement_type)
-        validation_result['amount_discrepancy'] = amount_check
+#         # Method 2: Check for amount discrepancies
+#         amount_check = self.validate_amounts(pdf_path, extracted_data, statement_type)
+#         validation_result['amount_discrepancy'] = amount_check
         
-        # Method 3: Find potential missed transactions
-        missed_transactions = self.find_potential_missed_transactions(pdf_path, extracted_data, statement_type)
-        validation_result['potential_missed'] = missed_transactions
+#         # Method 3: Find potential missed transactions
+#         missed_transactions = self.find_potential_missed_transactions(pdf_path, extracted_data, statement_type)
+#         validation_result['potential_missed'] = missed_transactions
         
-        # Method 4: Calculate confidence score
-        validation_result['confidence_score'] = self.calculate_confidence_score(validation_result)
+#         # Method 4: Calculate confidence score
+#         validation_result['confidence_score'] = self.calculate_confidence_score(validation_result)
         
-        # Method 5: Generate validation report
-        self.print_validation_report(validation_result)
+#         # Method 5: Generate validation report
+#         self.print_validation_report(validation_result)
         
-        return validation_result
+#         return validation_result
     
     def count_potential_transactions_in_text(self, pdf_path, statement_type):
         """Count lines that look like transactions in the raw PDF text"""
@@ -445,18 +445,18 @@ class UniversalPDFToExcelConverter:
         except Exception:
             pass
         
-    def setup_folders(self):
-        """Create the Convert and Excel folders if they don't exist"""
-        try:
-            if not os.path.exists(self.convert_folder):
-                os.makedirs(self.convert_folder)
-                self.update_progress("📁 Created Convert folder", f"Created '{self.convert_folder}' folder")
+    # def setup_folders(self):
+    #     """Create the Convert and Excel folders if they don't exist"""
+    #     try:
+    #         if not os.path.exists(self.convert_folder):
+    #             os.makedirs(self.convert_folder)
+    #             self.update_progress("📁 Created Convert folder", f"Created '{self.convert_folder}' folder")
                 
-            if not os.path.exists(self.excel_folder):
-                os.makedirs(self.excel_folder)
-                self.update_progress("📁 Created Excel folder", f"Created '{self.excel_folder}' folder")
-        except Exception as e:
-            self.update_progress("⚠️ Folder creation warning", f"Could not create folders: {str(e)}")
+    #         if not os.path.exists(self.excel_folder):
+    #             os.makedirs(self.excel_folder)
+    #             self.update_progress("📁 Created Excel folder", f"Created '{self.excel_folder}' folder")
+    #     except Exception as e:
+    #         self.update_progress("⚠️ Folder creation warning", f"Could not create folders: {str(e)}")
     
     def extract_chase_date_range(self, text):
         """Extract the date range from Chase PDF ACCOUNT SUMMARY section"""
@@ -542,71 +542,71 @@ class UniversalPDFToExcelConverter:
         
         return None
     
-    def convert_chase_date_to_full(self, date_str):
-        """Convert MM/DD/YY to MM/DD/YYYY"""
-        try:
-            parts = date_str.split('/')
-            if len(parts) == 3:
-                month, day, year = parts
-                if len(year) == 2:
-                    year_num = int(year)
-                    if year_num >= 50:
-                        full_year = f"19{year_num}"
-                    else:
-                        full_year = f"20{year_num}"
-                    return f"{month}/{day}/{full_year}"
-                else:
-                    return date_str
-        except Exception:
-            pass
-        return date_str
+    # def convert_chase_date_to_full(self, date_str):
+    #     """Convert MM/DD/YY to MM/DD/YYYY"""
+    #     try:
+    #         parts = date_str.split('/')
+    #         if len(parts) == 3:
+    #             month, day, year = parts
+    #             if len(year) == 2:
+    #                 year_num = int(year)
+    #                 if year_num >= 50:
+    #                     full_year = f"19{year_num}"
+    #                 else:
+    #                     full_year = f"20{year_num}"
+    #                 return f"{month}/{day}/{full_year}"
+    #             else:
+    #                 return date_str
+    #     except Exception:
+    #         pass
+    #     return date_str
     
-    def get_chase_transaction_year(self, transaction_month):
-        """Determine the correct year for a Chase transaction based on the date range"""
-        try:
-            if not self.chase_date_range:
-                # Fallback to current year
-                return datetime.now().year
+    # def get_chase_transaction_year(self, transaction_month):
+    #     """Determine the correct year for a Chase transaction based on the date range"""
+    #     try:
+    #         if not self.chase_date_range:
+    #             # Fallback to current year
+    #             return datetime.now().year
             
-            start_month = self.chase_date_range['start_month']
-            end_month = self.chase_date_range['end_month']
-            start_year = self.chase_date_range['start_year']
-            end_year = self.chase_date_range['end_year']
+    #         start_month = self.chase_date_range['start_month']
+    #         end_month = self.chase_date_range['end_month']
+    #         start_year = self.chase_date_range['start_year']
+    #         end_year = self.chase_date_range['end_year']
             
-            # Handle year boundary cases (e.g., 12/24/24 - 01/23/25)
-            if start_year != end_year:
-                if transaction_month >= start_month:
-                    return start_year
-                else:
-                    return end_year
-            else:
-                # Same year for all transactions
-                return start_year
+    #         # Handle year boundary cases (e.g., 12/24/24 - 01/23/25)
+    #         if start_year != end_year:
+    #             if transaction_month >= start_month:
+    #                 return start_year
+    #             else:
+    #                 return end_year
+    #         else:
+    #             # Same year for all transactions
+    #             return start_year
                 
-        except Exception:
-            return datetime.now().year
+    #     except Exception:
+    #         return datetime.now().year
             
-    def detect_statement_type(self, text, filename):
-        """Detect if the PDF is American Express or Chase"""
-        try:
-            text_upper = text.upper()
-            filename_upper = filename.upper()
+    # def detect_statement_type(self, text, filename):
+    #     """Detect if the PDF is American Express or Chase"""
+    #     try:
+    #         text_upper = text.upper()
+    #         filename_upper = filename.upper()
             
-            # Check filename first for more reliable detection
-            if 'AMEX' in filename_upper or 'AMERICAN' in filename_upper:
-                return 'amex'
-            elif 'CHASE' in filename_upper:
-                return 'chase'
+    #         # Check filename first for more reliable detection
+    #         if 'AMEX' in filename_upper or 'AMERICAN' in filename_upper:
+    #             return 'amex'
+    #         elif 'CHASE' in filename_upper:
+    #             return 'chase'
             
-            # Fallback to content detection
-            if 'AMERICAN EXPRESS' in text_upper or 'AMAZON BUSINESS PRIME CARD' in text_upper:
-                return 'amex'
-            elif 'CHASE' in text_upper and ('ULTIMATE REWARDS' in text_upper or 'ACCOUNT ACTIVITY' in text_upper):
-                return 'chase'
-            else:
-                return 'unknown'
-        except Exception:
-            return 'unknown'
+    #         # Fallback to content detection
+    #         if 'AMERICAN EXPRESS' in text_upper or 'AMAZON BUSINESS PRIME CARD' in text_upper:
+    #             return 'amex'
+    #         elif 'CHASE' in text_upper and ('ULTIMATE REWARDS' in text_upper or 'ACCOUNT ACTIVITY' in text_upper):
+    #             return 'chase'
+    #         else:
+    #             return 'unknown'
+    #     except Exception:
+    #         return 'unknown'
     
     def extract_pdf_content(self, pdf_path):
         """Extract transaction data and validate results"""
@@ -678,40 +678,40 @@ class UniversalPDFToExcelConverter:
             
         return extracted_data, statement_type
     
-    def create_validation_report(self):
-        """Create a comprehensive validation report"""
-        report_path = os.path.join(self.excel_folder, f"Validation_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt")
+    # def create_validation_report(self):
+    #     """Create a comprehensive validation report"""
+    #     report_path = os.path.join(self.excel_folder, f"Validation_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt")
         
-        try:
-            with open(report_path, 'w') as f:
-                f.write("PDF TO EXCEL CONVERSION - VALIDATION REPORT\n")
-                f.write("=" * 50 + "\n\n")
-                f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+    #     try:
+    #         with open(report_path, 'w') as f:
+    #             f.write("PDF TO EXCEL CONVERSION - VALIDATION REPORT\n")
+    #             f.write("=" * 50 + "\n\n")
+    #             f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
                 
-                for pdf_path, result in self.validator.validation_results.items():
-                    f.write(f"FILE: {result['pdf_file']}\n")
-                    f.write("-" * 30 + "\n")
-                    f.write(f"Statement Type: {result['statement_type'].upper()}\n")
-                    f.write(f"Extracted: {result['extracted_count']} transactions\n")
-                    f.write(f"Estimated Total: {result['estimated_total']} transactions\n")
-                    f.write(f"Confidence Score: {result['confidence_score']}%\n")
+    #             for pdf_path, result in self.validator.validation_results.items():
+    #                 f.write(f"FILE: {result['pdf_file']}\n")
+    #                 f.write("-" * 30 + "\n")
+    #                 f.write(f"Statement Type: {result['statement_type'].upper()}\n")
+    #                 f.write(f"Extracted: {result['extracted_count']} transactions\n")
+    #                 f.write(f"Estimated Total: {result['estimated_total']} transactions\n")
+    #                 f.write(f"Confidence Score: {result['confidence_score']}%\n")
                     
-                    if result['amount_discrepancy']:
-                        disc = result['amount_discrepancy']
-                        f.write(f"Amount Discrepancy: ${disc['difference']:,.2f}\n")
+    #                 if result['amount_discrepancy']:
+    #                     disc = result['amount_discrepancy']
+    #                     f.write(f"Amount Discrepancy: ${disc['difference']:,.2f}\n")
                     
-                    if result['potential_missed']:
-                        f.write(f"Potential Missed: {len(result['potential_missed'])} transactions\n")
-                        f.write("Details:\n")
-                        for missed in result['potential_missed']:
-                            f.write(f"  Page {missed['page']}: {missed['text']}\n")
+    #                 if result['potential_missed']:
+    #                     f.write(f"Potential Missed: {len(result['potential_missed'])} transactions\n")
+    #                     f.write("Details:\n")
+    #                     for missed in result['potential_missed']:
+    #                         f.write(f"  Page {missed['page']}: {missed['text']}\n")
                     
-                    f.write("\n")
+    #                 f.write("\n")
                 
-            print(f"\n📋 Validation report saved: {report_path}")
+    #         print(f"\n📋 Validation report saved: {report_path}")
             
-        except Exception as e:
-            print(f"❌ Error creating validation report: {e}")
+    #     except Exception as e:
+    #         print(f"❌ Error creating validation report: {e}")
     
     # def parse_amex_page(self, page_text, page_num):
     #     """Parse American Express transactions from a single page"""
@@ -750,125 +750,125 @@ class UniversalPDFToExcelConverter:
         
     #     return transactions
     
-    def parse_amex_transaction_line(self, line):
-        """Parse individual American Express transaction line"""
-        try:
-            # Step 1: Extract date (MM/DD or MM/DD/YY) from the beginning
-            date_match = re.match(r'^(\d{1,2}/\d{1,2}(?:/\d{2,4})?)', line)
-            if not date_match:
-                return None
+    # def parse_amex_transaction_line(self, line):
+    #     """Parse individual American Express transaction line"""
+    #     try:
+    #         # Step 1: Extract date (MM/DD or MM/DD/YY) from the beginning
+    #         date_match = re.match(r'^(\d{1,2}/\d{1,2}(?:/\d{2,4})?)', line)
+    #         if not date_match:
+    #             return None
             
-            date_part = date_match.group(1)
-            remaining_text = line[date_match.end():].strip()
+    #         date_part = date_match.group(1)
+    #         remaining_text = line[date_match.end():].strip()
             
-            # Step 2: Extract amount from the end (look for $XX.XX pattern)
-            amount_match = re.search(r'([-]?\$?[\d,]+\.\d{2})$', remaining_text)
-            if not amount_match:
-                return None
+    #         # Step 2: Extract amount from the end (look for $XX.XX pattern)
+    #         amount_match = re.search(r'([-]?\$?[\d,]+\.\d{2})$', remaining_text)
+    #         if not amount_match:
+    #             return None
             
-            amount_str = amount_match.group(1)
-            merchant_and_location = remaining_text[:amount_match.start()].strip()
+    #         amount_str = amount_match.group(1)
+    #         merchant_and_location = remaining_text[:amount_match.start()].strip()
             
-            # Step 3: Clean up amount and check if it's a charge (positive)
-            amount_str = amount_str.replace('$', '').replace(',', '')
+    #         # Step 3: Clean up amount and check if it's a charge (positive)
+    #         amount_str = amount_str.replace('$', '').replace(',', '')
             
-            # Skip negative amounts (payments/credits)
-            try:
-                amount_value = float(amount_str)
-                if amount_value <= 0:
-                    return None  # Skip payments and credits
-            except ValueError:
-                return None  # Skip if amount can't be parsed
+    #         # Skip negative amounts (payments/credits)
+    #         try:
+    #             amount_value = float(amount_str)
+    #             if amount_value <= 0:
+    #                 return None  # Skip payments and credits
+    #         except ValueError:
+    #             return None  # Skip if amount can't be parsed
             
-            # Step 4: Extract ONLY merchant name from the middle part
-            merchant_name = self.extract_merchant_name(merchant_and_location)
+    #         # Step 4: Extract ONLY merchant name from the middle part
+    #         merchant_name = self.extract_merchant_name(merchant_and_location)
             
-            if not merchant_name or len(merchant_name) < 3:
-                return None
+    #         if not merchant_name or len(merchant_name) < 3:
+    #             return None
             
-            # Step 5: Handle date conversion
-            full_date = self.convert_date(date_part)
-            if not full_date:
-                return None
+    #         # Step 5: Handle date conversion
+    #         full_date = self.convert_date(date_part)
+    #         if not full_date:
+    #             return None
             
-            return {
-                'Date': full_date,
-                'Merchant': merchant_name,
-                'Amount': amount_str
-            }
+    #         return {
+    #             'Date': full_date,
+    #             'Merchant': merchant_name,
+    #             'Amount': amount_str
+    #         }
         
-        except Exception:
-            return None
+    #     except Exception:
+    #         return None
     
-    def extract_merchant_name(self, text):
-        """Extract only the merchant name, excluding location and personal info"""
-        try:
-            # Remove common prefixes
-            text = re.sub(r'^(AplPay|TST\*|SQ \*)', '', text).strip()
+    # def extract_merchant_name(self, text):
+    #     """Extract only the merchant name, excluding location and personal info"""
+    #     try:
+    #         # Remove common prefixes
+    #         text = re.sub(r'^(AplPay|TST\*|SQ \*)', '', text).strip()
             
-            # Split by common delimiters and patterns
-            words = text.split()
-            merchant_parts = []
+    #         # Split by common delimiters and patterns
+    #         words = text.split()
+    #         merchant_parts = []
             
-            for word in words:
-                # Stop at common location indicators
-                if (word.upper() in ['CA', 'NY', 'TX', 'FL', 'WA', 'OR', 'NV', 'AZ'] or  # State codes
-                    re.match(r'^\d{3}-\d{3}-\d{4}$', word) or  # Phone numbers
-                    re.match(r'^\d{10,}$', word) or  # Long numbers
-                    word.lower().endswith('.com') or  # Websites
-                    word.lower().endswith('.net') or
-                    word.lower().endswith('.org') or
-                    len(word) > 20):  # Very long words (likely IDs or URLs)
-                    break
+    #         for word in words:
+    #             # Stop at common location indicators
+    #             if (word.upper() in ['CA', 'NY', 'TX', 'FL', 'WA', 'OR', 'NV', 'AZ'] or  # State codes
+    #                 re.match(r'^\d{3}-\d{3}-\d{4}$', word) or  # Phone numbers
+    #                 re.match(r'^\d{10,}$', word) or  # Long numbers
+    #                 word.lower().endswith('.com') or  # Websites
+    #                 word.lower().endswith('.net') or
+    #                 word.lower().endswith('.org') or
+    #                 len(word) > 20):  # Very long words (likely IDs or URLs)
+    #                 break
                 
-                # Add word to merchant name if it looks valid
-                if (len(word) >= 2 and 
-                    not word.isdigit() and 
-                    word.upper() not in ['AND', 'THE', 'OF', 'IN', 'AT', 'FOR']):
-                    merchant_parts.append(word)
+    #             # Add word to merchant name if it looks valid
+    #             if (len(word) >= 2 and 
+    #                 not word.isdigit() and 
+    #                 word.upper() not in ['AND', 'THE', 'OF', 'IN', 'AT', 'FOR']):
+    #                 merchant_parts.append(word)
             
-            # Join the merchant parts
-            merchant_name = ' '.join(merchant_parts)
+    #         # Join the merchant parts
+    #         merchant_name = ' '.join(merchant_parts)
             
-            # Clean up common patterns
-            merchant_name = re.sub(r'\s+', ' ', merchant_name)  # Multiple spaces
-            merchant_name = re.sub(r'[#*]+.*$', '', merchant_name)  # Remove # and * suffixes
-            merchant_name = merchant_name.strip()
+    #         # Clean up common patterns
+    #         merchant_name = re.sub(r'\s+', ' ', merchant_name)  # Multiple spaces
+    #         merchant_name = re.sub(r'[#*]+.*$', '', merchant_name)  # Remove # and * suffixes
+    #         merchant_name = merchant_name.strip()
             
-            # Additional cleanup for specific patterns
-            merchant_name = re.sub(r'\s+\d{3,}$', '', merchant_name)
+    #         # Additional cleanup for specific patterns
+    #         merchant_name = re.sub(r'\s+\d{3,}$', '', merchant_name)
             
-            return merchant_name
+    #         return merchant_name
         
-        except Exception:
-            return ""
+    #     except Exception:
+    #         return ""
     
-    def convert_date(self, date_str):
-        """Convert date string to full format"""
-        try:
-            if '/' in date_str:
-                date_components = date_str.split('/')
-                if len(date_components) == 3:
-                    # Full date with year (MM/DD/YY)
-                    month, day, year = date_components
-                    if len(year) == 2:
-                        # Convert 2-digit year to 4-digit year
-                        year_num = int(year)
-                        if year_num >= 50:  # Assume 1950-1999
-                            full_year = f"19{year_num}"
-                        else:  # Assume 2000-2049
-                            full_year = f"20{year_num}"
-                        return f"{month}/{day}/{full_year}"
-                    else:
-                        return date_str
-                elif len(date_components) == 2:
-                    # MM/DD format - use current year
-                    current_year = datetime.now().year
-                    return f"{date_str}/{current_year}"
-        except Exception:
-            pass
+    # def convert_date(self, date_str):
+    #     """Convert date string to full format"""
+    #     try:
+    #         if '/' in date_str:
+    #             date_components = date_str.split('/')
+    #             if len(date_components) == 3:
+    #                 # Full date with year (MM/DD/YY)
+    #                 month, day, year = date_components
+    #                 if len(year) == 2:
+    #                     # Convert 2-digit year to 4-digit year
+    #                     year_num = int(year)
+    #                     if year_num >= 50:  # Assume 1950-1999
+    #                         full_year = f"19{year_num}"
+    #                     else:  # Assume 2000-2049
+    #                         full_year = f"20{year_num}"
+    #                     return f"{month}/{day}/{full_year}"
+    #                 else:
+    #                     return date_str
+    #             elif len(date_components) == 2:
+    #                 # MM/DD format - use current year
+    #                 current_year = datetime.now().year
+    #                 return f"{date_str}/{current_year}"
+    #     except Exception:
+    #         pass
         
-        return None
+    #     return None
     
     def parse_chase_page(self, page_text, page_num):
         """Parse Chase page with enhanced name detection and debugging"""
@@ -1000,217 +1000,217 @@ class UniversalPDFToExcelConverter:
         return transactions
     
 
-    def is_valid_chase_cardholder_name(self, name):
-        """Validate if a string is likely a Chase cardholder name"""
-        try:
-            if not name or len(name.strip()) < 3:
-                print(f"      🔍 CHASE VALIDATION: '{name}' - TOO SHORT")
-                return False
+    # def is_valid_chase_cardholder_name(self, name):
+    #     """Validate if a string is likely a Chase cardholder name"""
+    #     try:
+    #         if not name or len(name.strip()) < 3:
+    #             print(f"      🔍 CHASE VALIDATION: '{name}' - TOO SHORT")
+    #             return False
                 
-            name = name.strip()
-            words = name.split()
+    #         name = name.strip()
+    #         words = name.split()
             
-            # Must have at least 2 words (first and last name)
-            if len(words) < 2 or len(words) > 5:  # Chase allows slightly longer names
-                print(f"      🔍 CHASE VALIDATION: '{name}' - WRONG WORD COUNT ({len(words)})")
-                return False
+    #         # Must have at least 2 words (first and last name)
+    #         if len(words) < 2 or len(words) > 5:  # Chase allows slightly longer names
+    #             print(f"      🔍 CHASE VALIDATION: '{name}' - WRONG WORD COUNT ({len(words)})")
+    #             return False
             
-            # Must be all uppercase (Chase format)
-            if not name.isupper():
-                print(f"      🔍 CHASE VALIDATION: '{name}' - NOT UPPERCASE")
-                return False
+    #         # Must be all uppercase (Chase format)
+    #         if not name.isupper():
+    #             print(f"      🔍 CHASE VALIDATION: '{name}' - NOT UPPERCASE")
+    #             return False
             
-            # Each word should be alphabetic (with exceptions)
-            valid_parts = ['JR', 'SR', 'III', 'IV', 'II', 'DE', 'LA', 'DEL', 'VON', 'VAN', 'MC', 'MAC']
-            for word in words:
-                if not (word.isalpha() or word in valid_parts):
-                    print(f"      🔍 CHASE VALIDATION: '{name}' - NON-ALPHA: {word}")
-                    return False
+    #         # Each word should be alphabetic (with exceptions)
+    #         valid_parts = ['JR', 'SR', 'III', 'IV', 'II', 'DE', 'LA', 'DEL', 'VON', 'VAN', 'MC', 'MAC']
+    #         for word in words:
+    #             if not (word.isalpha() or word in valid_parts):
+    #                 print(f"      🔍 CHASE VALIDATION: '{name}' - NON-ALPHA: {word}")
+    #                 return False
             
-            # Check word lengths
-            for word in words:
-                if len(word) < 2 or len(word) > 15:
-                    print(f"      🔍 CHASE VALIDATION: '{name}' - BAD LENGTH: {word}")
-                    return False
+    #         # Check word lengths
+    #         for word in words:
+    #             if len(word) < 2 or len(word) > 15:
+    #                 print(f"      🔍 CHASE VALIDATION: '{name}' - BAD LENGTH: {word}")
+    #                 return False
             
-            # Check for vowels in short words
-            for word in words:
-                if len(word) <= 3 and not any(vowel in word for vowel in 'AEIOU'):
-                    print(f"      🔍 CHASE VALIDATION: '{name}' - NO VOWELS: {word}")
-                    return False
+    #         # Check for vowels in short words
+    #         for word in words:
+    #             if len(word) <= 3 and not any(vowel in word for vowel in 'AEIOU'):
+    #                 print(f"      🔍 CHASE VALIDATION: '{name}' - NO VOWELS: {word}")
+    #                 return False
             
-            # Chase-specific false positives
-            chase_false_positives = [
-                'ACCOUNT SUMMARY', 'ACCOUNT ACTIVITY', 'ACCOUNT MESSAGES', 'ACCOUNT NUMBER',
-                'CHASE ULTIMATE', 'ULTIMATE REWARDS', 'CUSTOMER SERVICE', 'PAYMENT DUE',
-                'NEW BALANCE', 'MINIMUM PAYMENT', 'TRANSACTIONS THIS', 'INCLUDING PAYMENTS',
-                'PREVIOUS BALANCE', 'CASH ADVANCES', 'BALANCE TRANSFERS', 'INTEREST CHARGED',
-                'LATE PAYMENT', 'OVERLIMIT FEE', 'ANNUAL FEE', 'FINANCE CHARGE',
-                'SERVICE STATION', 'GAS STATION', 'GROCERY STORE', 'DEPARTMENT STORE',
-                'FAST FOOD', 'RESTAURANT', 'COFFEE SHOP', 'AUTO PARTS', 'HOME DEPOT'
-            ]
+    #         # Chase-specific false positives
+    #         chase_false_positives = [
+    #             'ACCOUNT SUMMARY', 'ACCOUNT ACTIVITY', 'ACCOUNT MESSAGES', 'ACCOUNT NUMBER',
+    #             'CHASE ULTIMATE', 'ULTIMATE REWARDS', 'CUSTOMER SERVICE', 'PAYMENT DUE',
+    #             'NEW BALANCE', 'MINIMUM PAYMENT', 'TRANSACTIONS THIS', 'INCLUDING PAYMENTS',
+    #             'PREVIOUS BALANCE', 'CASH ADVANCES', 'BALANCE TRANSFERS', 'INTEREST CHARGED',
+    #             'LATE PAYMENT', 'OVERLIMIT FEE', 'ANNUAL FEE', 'FINANCE CHARGE',
+    #             'SERVICE STATION', 'GAS STATION', 'GROCERY STORE', 'DEPARTMENT STORE',
+    #             'FAST FOOD', 'RESTAURANT', 'COFFEE SHOP', 'AUTO PARTS', 'HOME DEPOT'
+    #         ]
             
-            for fp in chase_false_positives:
-                if fp in name.upper():
-                    print(f"      🔍 CHASE VALIDATION: '{name}' - FALSE POSITIVE: {fp}")
-                    return False
+    #         for fp in chase_false_positives:
+    #             if fp in name.upper():
+    #                 print(f"      🔍 CHASE VALIDATION: '{name}' - FALSE POSITIVE: {fp}")
+    #                 return False
             
-            # Business terms specific to Chase statements
-            chase_business_terms = ['LLC', 'INC', 'CORP', 'LTD', 'CO', 'STORE', 'SHOP', 'MARKET', 'CENTER']
-            for word in words:
-                if word in chase_business_terms:
-                    print(f"      🔍 CHASE VALIDATION: '{name}' - BUSINESS TERM: {word}")
-                    return False
+    #         # Business terms specific to Chase statements
+    #         chase_business_terms = ['LLC', 'INC', 'CORP', 'LTD', 'CO', 'STORE', 'SHOP', 'MARKET', 'CENTER']
+    #         for word in words:
+    #             if word in chase_business_terms:
+    #                 print(f"      🔍 CHASE VALIDATION: '{name}' - BUSINESS TERM: {word}")
+    #                 return False
             
-            print(f"      ✅ CHASE VALIDATION: '{name}' - PASSED")
-            return True
+    #         print(f"      ✅ CHASE VALIDATION: '{name}' - PASSED")
+    #         return True
             
-        except Exception as e:
-            print(f"      🚨 CHASE VALIDATION ERROR: {e}")
-            return False
+    #     except Exception as e:
+    #         print(f"      🚨 CHASE VALIDATION ERROR: {e}")
+    #         return False
     
-    def extract_chase_cardholder_name(self, current_line, all_lines, current_index):
-        """Enhanced Chase cardholder name extraction with better debugging"""
-        try:
-            print(f"🔍 DEBUG: Checking Chase name pattern on line {current_index + 1}: '{current_line}'")
+    # def extract_chase_cardholder_name(self, current_line, all_lines, current_index):
+    #     """Enhanced Chase cardholder name extraction with better debugging"""
+    #     try:
+    #         print(f"🔍 DEBUG: Checking Chase name pattern on line {current_index + 1}: '{current_line}'")
             
-            # Pattern 1: Look for "TRANSACTIONS THIS CYCLE (CARD XXXX)" pattern
-            if 'TRANSACTIONS THIS CYCLE' in current_line.upper() and 'CARD' in current_line.upper():
-                print(f"   📋 Found TRANSACTIONS THIS CYCLE pattern")
+    #         # Pattern 1: Look for "TRANSACTIONS THIS CYCLE (CARD XXXX)" pattern
+    #         if 'TRANSACTIONS THIS CYCLE' in current_line.upper() and 'CARD' in current_line.upper():
+    #             print(f"   📋 Found TRANSACTIONS THIS CYCLE pattern")
                 
-                # Extract card number for validation
-                card_match = re.search(r'CARD\s+(\d+)', current_line.upper())
-                if card_match:
-                    card_number = card_match.group(1)
-                    print(f"   💳 Card number found: {card_number}")
+    #             # Extract card number for validation
+    #             card_match = re.search(r'CARD\s+(\d+)', current_line.upper())
+    #             if card_match:
+    #                 card_number = card_match.group(1)
+    #                 print(f"   💳 Card number found: {card_number}")
                 
-                # The name should be on the previous line(s)
-                potential_name = None
+    #             # The name should be on the previous line(s)
+    #             potential_name = None
                 
-                # Check previous line for name
-                if current_index > 0:
-                    prev_line = all_lines[current_index - 1].strip()
-                    print(f"   🔎 Checking previous line for name: '{prev_line}'")
+    #             # Check previous line for name
+    #             if current_index > 0:
+    #                 prev_line = all_lines[current_index - 1].strip()
+    #                 print(f"   🔎 Checking previous line for name: '{prev_line}'")
                     
-                    if self.is_valid_chase_cardholder_name(prev_line):
-                        potential_name = prev_line.strip()
-                        print(f"   ✅ VALID CHASE NAME: '{potential_name}' (from previous line)")
-                        return potential_name
-                    else:
-                        print(f"   ❌ Previous line failed validation: '{prev_line}'")
+    #                 if self.is_valid_chase_cardholder_name(prev_line):
+    #                     potential_name = prev_line.strip()
+    #                     print(f"   ✅ VALID CHASE NAME: '{potential_name}' (from previous line)")
+    #                     return potential_name
+    #                 else:
+    #                     print(f"   ❌ Previous line failed validation: '{prev_line}'")
                 
-                # Check 2 lines back in case there's a blank line
-                if current_index > 1:
-                    prev_prev_line = all_lines[current_index - 2].strip()
-                    print(f"   🔎 Checking 2 lines back for name: '{prev_prev_line}'")
+    #             # Check 2 lines back in case there's a blank line
+    #             if current_index > 1:
+    #                 prev_prev_line = all_lines[current_index - 2].strip()
+    #                 print(f"   🔎 Checking 2 lines back for name: '{prev_prev_line}'")
                     
-                    if self.is_valid_chase_cardholder_name(prev_prev_line):
-                        potential_name = prev_prev_line.strip()
-                        print(f"   ✅ VALID CHASE NAME: '{potential_name}' (from 2 lines back)")
-                        return potential_name
-                    else:
-                        print(f"   ❌ 2 lines back failed validation: '{prev_prev_line}'")
+    #                 if self.is_valid_chase_cardholder_name(prev_prev_line):
+    #                     potential_name = prev_prev_line.strip()
+    #                     print(f"   ✅ VALID CHASE NAME: '{potential_name}' (from 2 lines back)")
+    #                     return potential_name
+    #                 else:
+    #                     print(f"   ❌ 2 lines back failed validation: '{prev_prev_line}'")
                 
-                # Check 3 lines back
-                if current_index > 2:
-                    prev_prev_prev_line = all_lines[current_index - 3].strip()
-                    print(f"   🔎 Checking 3 lines back for name: '{prev_prev_prev_line}'")
+    #             # Check 3 lines back
+    #             if current_index > 2:
+    #                 prev_prev_prev_line = all_lines[current_index - 3].strip()
+    #                 print(f"   🔎 Checking 3 lines back for name: '{prev_prev_prev_line}'")
                     
-                    if self.is_valid_chase_cardholder_name(prev_prev_prev_line):
-                        potential_name = prev_prev_prev_line.strip()
-                        print(f"   ✅ VALID CHASE NAME: '{potential_name}' (from 3 lines back)")
-                        return potential_name
+    #                 if self.is_valid_chase_cardholder_name(prev_prev_prev_line):
+    #                     potential_name = prev_prev_prev_line.strip()
+    #                     print(f"   ✅ VALID CHASE NAME: '{potential_name}' (from 3 lines back)")
+    #                     return potential_name
             
-            # Pattern 2: Look for name followed by "TRANSACTIONS THIS CYCLE" on the SAME line
-            if 'TRANSACTIONS THIS CYCLE' in current_line.upper():
-                # Split by "TRANSACTIONS" to get the name part
-                parts = current_line.split('TRANSACTIONS THIS CYCLE')
-                if len(parts) > 0:
-                    potential_name = parts[0].strip()
-                    print(f"   🔎 Extracted name from same line: '{potential_name}'")
+    #         # Pattern 2: Look for name followed by "TRANSACTIONS THIS CYCLE" on the SAME line
+    #         if 'TRANSACTIONS THIS CYCLE' in current_line.upper():
+    #             # Split by "TRANSACTIONS" to get the name part
+    #             parts = current_line.split('TRANSACTIONS THIS CYCLE')
+    #             if len(parts) > 0:
+    #                 potential_name = parts[0].strip()
+    #                 print(f"   🔎 Extracted name from same line: '{potential_name}'")
                     
-                    if self.is_valid_chase_cardholder_name(potential_name):
-                        print(f"   ✅ VALID CHASE NAME: '{potential_name}' (same line)")
-                        return potential_name
-                    else:
-                        print(f"   ❌ Same line name failed validation: '{potential_name}'")
+    #                 if self.is_valid_chase_cardholder_name(potential_name):
+    #                     print(f"   ✅ VALID CHASE NAME: '{potential_name}' (same line)")
+    #                     return potential_name
+    #                 else:
+    #                     print(f"   ❌ Same line name failed validation: '{potential_name}'")
             
-            # Pattern 3: Look for isolated name lines
-            if (len(current_line.split()) >= 2 and 
-                len(current_line.split()) <= 4 and
-                current_line.isupper() and
-                not any(char.isdigit() for char in current_line) and
-                len(current_line) <= 40):
+    #         # Pattern 3: Look for isolated name lines
+    #         if (len(current_line.split()) >= 2 and 
+    #             len(current_line.split()) <= 4 and
+    #             current_line.isupper() and
+    #             not any(char.isdigit() for char in current_line) and
+    #             len(current_line) <= 40):
                 
-                print(f"   📋 Checking isolated name candidate: '{current_line}'")
+    #             print(f"   📋 Checking isolated name candidate: '{current_line}'")
                 
-                # Check if the next few lines contain "TRANSACTIONS THIS CYCLE" or transaction patterns
-                found_supporting_evidence = False
-                for check_ahead in range(1, 8):  # Check next 7 lines
-                    if current_index + check_ahead < len(all_lines):
-                        future_line = all_lines[current_index + check_ahead]
-                        if ('TRANSACTIONS THIS CYCLE' in future_line.upper() or
-                            # Look for transaction patterns (date + amount)
-                            (re.search(r'^\d{1,2}/\d{1,2}', future_line) and re.search(r'\d+\.\d{2}$', future_line))):
-                            found_supporting_evidence = True
-                            print(f"   📊 Found supporting evidence {check_ahead} lines ahead: '{future_line[:50]}...'")
-                            break
+    #             # Check if the next few lines contain "TRANSACTIONS THIS CYCLE" or transaction patterns
+    #             found_supporting_evidence = False
+    #             for check_ahead in range(1, 8):  # Check next 7 lines
+    #                 if current_index + check_ahead < len(all_lines):
+    #                     future_line = all_lines[current_index + check_ahead]
+    #                     if ('TRANSACTIONS THIS CYCLE' in future_line.upper() or
+    #                         # Look for transaction patterns (date + amount)
+    #                         (re.search(r'^\d{1,2}/\d{1,2}', future_line) and re.search(r'\d+\.\d{2}$', future_line))):
+    #                         found_supporting_evidence = True
+    #                         print(f"   📊 Found supporting evidence {check_ahead} lines ahead: '{future_line[:50]}...'")
+    #                         break
                 
-                if found_supporting_evidence and self.is_valid_chase_cardholder_name(current_line):
-                    print(f"   ✅ VALID CHASE NAME: '{current_line}' (isolated, with supporting evidence)")
-                    return current_line.strip()
-                elif found_supporting_evidence:
-                    print(f"   ❌ Isolated name failed validation: '{current_line}'")
+    #             if found_supporting_evidence and self.is_valid_chase_cardholder_name(current_line):
+    #                 print(f"   ✅ VALID CHASE NAME: '{current_line}' (isolated, with supporting evidence)")
+    #                 return current_line.strip()
+    #             elif found_supporting_evidence:
+    #                 print(f"   ❌ Isolated name failed validation: '{current_line}'")
             
-            print(f"   ❌ NO CHASE NAME FOUND")
-            return None
+    #         print(f"   ❌ NO CHASE NAME FOUND")
+    #         return None
             
-        except Exception as e:
-            print(f"   🚨 ERROR in extract_chase_cardholder_name: {e}")
-            return None
+    #     except Exception as e:
+    #         print(f"   🚨 ERROR in extract_chase_cardholder_name: {e}")
+    #         return None
 
-    def parse_chase_transaction_line(self, line):
-        """Parse individual Chase transaction line with enhanced debugging"""
-        try:
-            # Chase format: MM/DD [&] MERCHANT_NAME LOCATION AMOUNT
-            date_pattern = r'^(\d{1,2}/\d{1,2})\s*(&?)\s*(.+?)\s+([-]?\d{1,}(?:,\d{3})*\.\d{2})$'
+    # def parse_chase_transaction_line(self, line):
+    #     """Parse individual Chase transaction line with enhanced debugging"""
+    #     try:
+    #         # Chase format: MM/DD [&] MERCHANT_NAME LOCATION AMOUNT
+    #         date_pattern = r'^(\d{1,2}/\d{1,2})\s*(&?)\s*(.+?)\s+([-]?\d{1,}(?:,\d{3})*\.\d{2})$'
             
-            match = re.match(date_pattern, line)
+    #         match = re.match(date_pattern, line)
             
-            if match:
-                date = match.group(1)
-                merchant_and_location = match.group(3).strip()
-                amount = match.group(4)
+    #         if match:
+    #             date = match.group(1)
+    #             merchant_and_location = match.group(3).strip()
+    #             amount = match.group(4)
                 
-                # Clean up merchant name
-                merchant_desc = re.sub(r'\s+', ' ', merchant_and_location)
-                merchant_desc = re.sub(r'\s+[A-Z]{2}$', '', merchant_desc)  # Remove state codes
-                merchant_desc = re.sub(r'\s+\d{3}-\d{3}-\d{4}$', '', merchant_desc)  # Remove phone numbers
-                merchant_desc = re.sub(r'\s+\d{10,}$', '', merchant_desc)  # Remove long numbers
+    #             # Clean up merchant name
+    #             merchant_desc = re.sub(r'\s+', ' ', merchant_and_location)
+    #             merchant_desc = re.sub(r'\s+[A-Z]{2}$', '', merchant_desc)  # Remove state codes
+    #             merchant_desc = re.sub(r'\s+\d{3}-\d{3}-\d{4}$', '', merchant_desc)  # Remove phone numbers
+    #             merchant_desc = re.sub(r'\s+\d{10,}$', '', merchant_desc)  # Remove long numbers
                 
-                # Skip negative amounts (payments/credits)
-                try:
-                    amount_value = float(amount.replace(',', ''))  # Remove commas before parsing!
-                    if amount_value <= 0:
-                        return None  # Skip payments and credits
-                except ValueError:
-                    return None  # Skip if amount can't be parsed
+    #             # Skip negative amounts (payments/credits)
+    #             try:
+    #                 amount_value = float(amount.replace(',', ''))  # Remove commas before parsing!
+    #                 if amount_value <= 0:
+    #                     return None  # Skip payments and credits
+    #             except ValueError:
+    #                 return None  # Skip if amount can't be parsed
                 
-                # Get the correct year based on the date range
-                transaction_month = int(date.split('/')[0])
-                correct_year = self.get_chase_transaction_year(transaction_month)
-                full_date = f"{date}/{correct_year}"
+    #             # Get the correct year based on the date range
+    #             transaction_month = int(date.split('/')[0])
+    #             correct_year = self.get_chase_transaction_year(transaction_month)
+    #             full_date = f"{date}/{correct_year}"
                 
-                return {
-                    'Date': full_date,
-                    'Merchant': merchant_desc,
-                    'Amount': amount
-                }
+    #             return {
+    #                 'Date': full_date,
+    #                 'Merchant': merchant_desc,
+    #                 'Amount': amount
+    #             }
         
-        except Exception:
-            pass
+    #     except Exception:
+    #         pass
         
-        return None
+    #     return None
     
     def process_all_pdfs(self):
         """Process all PDFs and create combined Excel files with validation"""
@@ -1409,276 +1409,276 @@ class UniversalPDFToExcelConverter:
             
         return extracted_data, statement_type
 
-    def parse_amex_page_global(self, page_text, page_num):
-        """Parse AmEx page using global cardholder tracking"""
-        transactions = []
+    # def parse_amex_page_global(self, page_text, page_num):
+    #     """Parse AmEx page using global cardholder tracking"""
+    #     transactions = []
         
-        print(f"\n📄 DEBUG: Starting page {page_num} with global cardholder: '{self.global_current_cardholder}'")
+    #     print(f"\n📄 DEBUG: Starting page {page_num} with global cardholder: '{self.global_current_cardholder}'")
         
-        try:
-            lines = page_text.split('\n')
-            print(f"📄 DEBUG: Page {page_num} has {len(lines)} lines")
+    #     try:
+    #         lines = page_text.split('\n')
+    #         print(f"📄 DEBUG: Page {page_num} has {len(lines)} lines")
             
-            for i, line in enumerate(lines):
-                try:
-                    line = line.strip()
+    #         for i, line in enumerate(lines):
+    #             try:
+    #                 line = line.strip()
                     
-                    # Skip empty lines
-                    if len(line) < 5:
-                        continue
+    #                 # Skip empty lines
+    #                 if len(line) < 5:
+    #                     continue
                     
-                    # Skip obvious headers
-                    if (('Merchant Name' in line and '$ Amount' in line) or
-                        'Date of Transaction' in line or
-                        line.startswith('Amazon Business Prime Card') or
-                        line.startswith('AMERICAN EXPRESS') or
-                        line.startswith('Page ') or
-                        line.startswith('Customer Care')):
-                        continue
+    #                 # Skip obvious headers
+    #                 if (('Merchant Name' in line and '$ Amount' in line) or
+    #                     'Date of Transaction' in line or
+    #                     line.startswith('Amazon Business Prime Card') or
+    #                     line.startswith('AMERICAN EXPRESS') or
+    #                     line.startswith('Page ') or
+    #                     line.startswith('Customer Care')):
+    #                     continue
                     
-                    # Check for continuation headers - preserve current name
-                    if self.is_continuation_header(line):
-                        print(f"📋 DEBUG: Continuation header on line {i+1}: '{line}'")
-                        print(f"   🔄 PRESERVING global cardholder: '{self.global_current_cardholder}'")
-                        continue
+    #                 # Check for continuation headers - preserve current name
+    #                 if self.is_continuation_header(line):
+    #                     print(f"📋 DEBUG: Continuation header on line {i+1}: '{line}'")
+    #                     print(f"   🔄 PRESERVING global cardholder: '{self.global_current_cardholder}'")
+    #                     continue
                     
-                    # Check for new cardholder name
-                    cardholder_name = self.extract_cardholder_name(line)
-                    if cardholder_name:
-                        old_cardholder = self.global_current_cardholder
-                        self.global_current_cardholder = cardholder_name
-                        print(f"🏷️  DEBUG: GLOBAL CARDHOLDER CHANGED on line {i+1}")
-                        print(f"   FROM: '{old_cardholder}' TO: '{self.global_current_cardholder}'")
-                        continue
+    #                 # Check for new cardholder name
+    #                 cardholder_name = self.extract_cardholder_name(line)
+    #                 if cardholder_name:
+    #                     old_cardholder = self.global_current_cardholder
+    #                     self.global_current_cardholder = cardholder_name
+    #                     print(f"🏷️  DEBUG: GLOBAL CARDHOLDER CHANGED on line {i+1}")
+    #                     print(f"   FROM: '{old_cardholder}' TO: '{self.global_current_cardholder}'")
+    #                     continue
                     
-                    # Parse transaction
-                    transaction = self.parse_amex_transaction_line(line)
-                    if transaction:
-                        # Use GLOBAL cardholder
-                        transaction['Name'] = self.global_current_cardholder
-                        transactions.append(transaction)
-                        print(f"💳 DEBUG: Transaction on line {i+1}")
-                        print(f"   ASSIGNED TO: '{self.global_current_cardholder}'")
-                        print(f"   TRANSACTION: {transaction['Date']} | {transaction['Merchant'][:30]}... | ${transaction['Amount']}")
-                    else:
-                        # Show potential missed transactions
-                        if (len(line) > 15 and 
-                            any(char.isdigit() for char in line) and 
-                            ('$' in line or re.search(r'\d+\.\d{2}', line)) and
-                            not any(skip in line.upper() for skip in ['TOTAL', 'BALANCE', 'PAYMENT', 'CREDIT'])):
-                            print(f"❓ DEBUG: Potential transaction not parsed on line {i+1}: '{line[:80]}...'")
+    #                 # Parse transaction
+    #                 transaction = self.parse_amex_transaction_line(line)
+    #                 if transaction:
+    #                     # Use GLOBAL cardholder
+    #                     transaction['Name'] = self.global_current_cardholder
+    #                     transactions.append(transaction)
+    #                     print(f"💳 DEBUG: Transaction on line {i+1}")
+    #                     print(f"   ASSIGNED TO: '{self.global_current_cardholder}'")
+    #                     print(f"   TRANSACTION: {transaction['Date']} | {transaction['Merchant'][:30]}... | ${transaction['Amount']}")
+    #                 else:
+    #                     # Show potential missed transactions
+    #                     if (len(line) > 15 and 
+    #                         any(char.isdigit() for char in line) and 
+    #                         ('$' in line or re.search(r'\d+\.\d{2}', line)) and
+    #                         not any(skip in line.upper() for skip in ['TOTAL', 'BALANCE', 'PAYMENT', 'CREDIT'])):
+    #                         print(f"❓ DEBUG: Potential transaction not parsed on line {i+1}: '{line[:80]}...'")
                 
-                except Exception as e:
-                    print(f"🚨 DEBUG: Error on line {i+1}: {e}")
-                    continue
+    #             except Exception as e:
+    #                 print(f"🚨 DEBUG: Error on line {i+1}: {e}")
+    #                 continue
         
-        except Exception as e:
-            print(f"🚨 DEBUG: Error parsing page {page_num}: {e}")
+    #     except Exception as e:
+    #         print(f"🚨 DEBUG: Error parsing page {page_num}: {e}")
         
-        print(f"📄 DEBUG: Page {page_num} completed - {len(transactions)} transactions")
-        print(f"📄 DEBUG: Global cardholder after page {page_num}: '{self.global_current_cardholder}'")
-        return transactions
+    #     print(f"📄 DEBUG: Page {page_num} completed - {len(transactions)} transactions")
+    #     print(f"📄 DEBUG: Global cardholder after page {page_num}: '{self.global_current_cardholder}'")
+    #     return transactions
 
-    def is_continuation_header(self, line):
-        """Check if line is a continuation header"""
-        try:
-            line_upper = line.strip().upper()
+    # def is_continuation_header(self, line):
+    #     """Check if line is a continuation header"""
+    #     try:
+    #         line_upper = line.strip().upper()
             
-            continuation_patterns = [
-                'DETAIL CONTINUED',
-                'CONTINUED ON NEXT PAGE',
-                'CONTINUED ON REVERSE',
-                'ACCOUNT ACTIVITY (CONTINUED)',
-                'ACCOUNT ACTIVITY CONTINUED',
-                'TRANSACTIONS THIS CYCLE',
-                'INCLUDING PAYMENTS RECEIVED',
-                'CONTINUED FROM PREVIOUS PAGE',
-                'AMOUNT'
-            ]
+    #         continuation_patterns = [
+    #             'DETAIL CONTINUED',
+    #             'CONTINUED ON NEXT PAGE',
+    #             'CONTINUED ON REVERSE',
+    #             'ACCOUNT ACTIVITY (CONTINUED)',
+    #             'ACCOUNT ACTIVITY CONTINUED',
+    #             'TRANSACTIONS THIS CYCLE',
+    #             'INCLUDING PAYMENTS RECEIVED',
+    #             'CONTINUED FROM PREVIOUS PAGE',
+    #             'AMOUNT'
+    #         ]
             
-            for pattern in continuation_patterns:
-                if pattern in line_upper:
-                    return True
+    #         for pattern in continuation_patterns:
+    #             if pattern in line_upper:
+    #                 return True
             
-            # Check for account ending lines in continuation sections
-            if ('ACCOUNT ENDING' in line_upper and 
-                len(line.split()) >= 3 and 
-                any(char.isdigit() for char in line)):
-                return True
+    #         # Check for account ending lines in continuation sections
+    #         if ('ACCOUNT ENDING' in line_upper and 
+    #             len(line.split()) >= 3 and 
+    #             any(char.isdigit() for char in line)):
+    #             return True
             
-            return False
+    #         return False
             
-        except Exception:
-            return False
+    #     except Exception:
+    #         return False
 
-    def extract_cardholder_name(self, line):
-        """Extract cardholder name with enhanced debugging"""
-        try:
-            line = line.strip()
+    # def extract_cardholder_name(self, line):
+    #     """Extract cardholder name with enhanced debugging"""
+    #     try:
+    #         line = line.strip()
             
-            print(f"🔍 DEBUG: Analyzing line: '{line}'")
+    #         print(f"🔍 DEBUG: Analyzing line: '{line}'")
             
-            # Skip continuation headers first
-            if self.is_continuation_header(line):
-                print(f"   🔄 SKIPPED: Continuation header")
-                return None
+    #         # Skip continuation headers first
+    #         if self.is_continuation_header(line):
+    #             print(f"   🔄 SKIPPED: Continuation header")
+    #             return None
             
-            # Skip lines with obvious non-name content
-            skip_patterns = [
-                'Amount', '$', 'Date', 'Merchant', 'Transaction', 'Account', 'Page',
-                'Statement', 'Balance', 'Payment', 'Interest', 'Fee', 'Charge',
-                'Credit', 'Debit', 'Purchase', 'Cash', 'Advance', 'Transfer',
-                'www.', 'http', '.com', '@', '#', '*', '&', '%', 
-                'Detail', 'Continued', 'Including', 'Payments', 'Received',
-                '/', '-', '(', ')', '[', ']', '{', '}', '|', '\\'
-            ]
+    #         # Skip lines with obvious non-name content
+    #         skip_patterns = [
+    #             'Amount', '$', 'Date', 'Merchant', 'Transaction', 'Account', 'Page',
+    #             'Statement', 'Balance', 'Payment', 'Interest', 'Fee', 'Charge',
+    #             'Credit', 'Debit', 'Purchase', 'Cash', 'Advance', 'Transfer',
+    #             'www.', 'http', '.com', '@', '#', '*', '&', '%', 
+    #             'Detail', 'Continued', 'Including', 'Payments', 'Received',
+    #             '/', '-', '(', ')', '[', ']', '{', '}', '|', '\\'
+    #         ]
             
-            skip_found = [pattern for pattern in skip_patterns if pattern in line]
-            if skip_found:
-                print(f"   ⏭️  SKIPPED: Contains: {skip_found}")
-                return None
+    #         skip_found = [pattern for pattern in skip_patterns if pattern in line]
+    #         if skip_found:
+    #             print(f"   ⏭️  SKIPPED: Contains: {skip_found}")
+    #             return None
             
-            # Pattern 1: "NAME Card Ending X-XXXXX"
-            if 'Card Ending' in line:
-                print(f"   📋 Pattern 1: Card Ending found")
+    #         # Pattern 1: "NAME Card Ending X-XXXXX"
+    #         if 'Card Ending' in line:
+    #             print(f"   📋 Pattern 1: Card Ending found")
                 
-                if any(word in line.upper() for word in ['CONTINUED', 'DETAIL', 'INCLUDING']):
-                    print(f"   ⏭️  SKIPPED: In continuation context")
-                    return None
+    #             if any(word in line.upper() for word in ['CONTINUED', 'DETAIL', 'INCLUDING']):
+    #                 print(f"   ⏭️  SKIPPED: In continuation context")
+    #                 return None
                 
-                parts = line.split('Card Ending')
-                if parts:
-                    potential_name = parts[0].strip()
-                    print(f"   🔎 Extracted: '{potential_name}'")
-                    if self.is_valid_cardholder_name(potential_name):
-                        print(f"   ✅ VALID: '{potential_name}' (Pattern 1)")
-                        return potential_name
-                    else:
-                        print(f"   ❌ INVALID: '{potential_name}'")
+    #             parts = line.split('Card Ending')
+    #             if parts:
+    #                 potential_name = parts[0].strip()
+    #                 print(f"   🔎 Extracted: '{potential_name}'")
+    #                 if self.is_valid_cardholder_name(potential_name):
+    #                     print(f"   ✅ VALID: '{potential_name}' (Pattern 1)")
+    #                     return potential_name
+    #                 else:
+    #                     print(f"   ❌ INVALID: '{potential_name}'")
             
-            # Pattern 2: Standalone name lines
-            words = line.split()
-            if (2 <= len(words) <= 3 and 
-                line.isupper() and 
-                len(line) <= 30 and
-                not any(char.isdigit() for char in line)):
+    #         # Pattern 2: Standalone name lines
+    #         words = line.split()
+    #         if (2 <= len(words) <= 3 and 
+    #             line.isupper() and 
+    #             len(line) <= 30 and
+    #             not any(char.isdigit() for char in line)):
                 
-                print(f"   📋 Pattern 2: Standalone name candidate")
+    #             print(f"   📋 Pattern 2: Standalone name candidate")
                 
-                if any(word in line.upper() for word in ['CONTINUED', 'DETAIL', 'INCLUDING', 'AMOUNT']):
-                    print(f"   ⏭️  SKIPPED: Near continuation keywords")
-                    return None
+    #             if any(word in line.upper() for word in ['CONTINUED', 'DETAIL', 'INCLUDING', 'AMOUNT']):
+    #                 print(f"   ⏭️  SKIPPED: Near continuation keywords")
+    #                 return None
                 
-                if self.is_valid_cardholder_name(line):
-                    print(f"   ✅ VALID: '{line}' (Pattern 2)")
-                    return line.strip()
-                else:
-                    print(f"   ❌ INVALID: '{line}'")
+    #             if self.is_valid_cardholder_name(line):
+    #                 print(f"   ✅ VALID: '{line}' (Pattern 2)")
+    #                 return line.strip()
+    #             else:
+    #                 print(f"   ❌ INVALID: '{line}'")
             
-            # Pattern 3: Name + account info
-            if len(words) >= 3:
-                print(f"   📋 Pattern 3: Name + account info")
+    #         # Pattern 3: Name + account info
+    #         if len(words) >= 3:
+    #             print(f"   📋 Pattern 3: Name + account info")
                 
-                if any(word in line.upper() for word in ['CONTINUED', 'DETAIL', 'INCLUDING']):
-                    print(f"   ⏭️  SKIPPED: In continuation context")
-                    return None
+    #             if any(word in line.upper() for word in ['CONTINUED', 'DETAIL', 'INCLUDING']):
+    #                 print(f"   ⏭️  SKIPPED: In continuation context")
+    #                 return None
                 
-                # Try 2-word names
-                potential_name = ' '.join(words[:2])
-                remaining = ' '.join(words[2:]).upper()
-                account_keywords = ['CARD', 'ACCOUNT', 'ENDING', 'AMOUNT']
-                found_keywords = [kw for kw in account_keywords if kw in remaining]
+    #             # Try 2-word names
+    #             potential_name = ' '.join(words[:2])
+    #             remaining = ' '.join(words[2:]).upper()
+    #             account_keywords = ['CARD', 'ACCOUNT', 'ENDING', 'AMOUNT']
+    #             found_keywords = [kw for kw in account_keywords if kw in remaining]
                 
-                if self.is_valid_cardholder_name(potential_name) and found_keywords:
-                    print(f"   ✅ VALID: '{potential_name}' (Pattern 3)")
-                    return potential_name
+    #             if self.is_valid_cardholder_name(potential_name) and found_keywords:
+    #                 print(f"   ✅ VALID: '{potential_name}' (Pattern 3)")
+    #                 return potential_name
                 
-                # Try 3-word names
-                if len(words) >= 4:
-                    potential_name = ' '.join(words[:3])
-                    remaining = ' '.join(words[3:]).upper()
-                    found_keywords = [kw for kw in account_keywords if kw in remaining]
+    #             # Try 3-word names
+    #             if len(words) >= 4:
+    #                 potential_name = ' '.join(words[:3])
+    #                 remaining = ' '.join(words[3:]).upper()
+    #                 found_keywords = [kw for kw in account_keywords if kw in remaining]
                     
-                    if self.is_valid_cardholder_name(potential_name) and found_keywords:
-                        print(f"   ✅ VALID: '{potential_name}' (Pattern 3)")
-                        return potential_name
+    #                 if self.is_valid_cardholder_name(potential_name) and found_keywords:
+    #                     print(f"   ✅ VALID: '{potential_name}' (Pattern 3)")
+    #                     return potential_name
             
-            print(f"   ❌ NO NAME FOUND")
-            return None
+    #         print(f"   ❌ NO NAME FOUND")
+    #         return None
                                 
-        except Exception as e:
-            print(f"   🚨 ERROR: {e}")
-            return None
+    #     except Exception as e:
+    #         print(f"   🚨 ERROR: {e}")
+    #         return None
 
-    def is_valid_cardholder_name(self, name):
-        """Enhanced name validation with detailed logging"""
-        try:
-            if not name or len(name.strip()) < 3:
-                print(f"      🔍 VALIDATION: '{name}' - TOO SHORT")
-                return False
+    # def is_valid_cardholder_name(self, name):
+    #     """Enhanced name validation with detailed logging"""
+    #     try:
+    #         if not name or len(name.strip()) < 3:
+    #             print(f"      🔍 VALIDATION: '{name}' - TOO SHORT")
+    #             return False
                 
-            name = name.strip()
-            words = name.split()
+    #         name = name.strip()
+    #         words = name.split()
             
-            if len(words) < 2 or len(words) > 4:
-                print(f"      🔍 VALIDATION: '{name}' - WRONG WORD COUNT ({len(words)})")
-                return False
+    #         if len(words) < 2 or len(words) > 4:
+    #             print(f"      🔍 VALIDATION: '{name}' - WRONG WORD COUNT ({len(words)})")
+    #             return False
             
-            if not name.isupper():
-                print(f"      🔍 VALIDATION: '{name}' - NOT UPPERCASE")
-                return False
+    #         if not name.isupper():
+    #             print(f"      🔍 VALIDATION: '{name}' - NOT UPPERCASE")
+    #             return False
             
-            # Check alphabetic characters
-            valid_parts = ['JR', 'SR', 'III', 'IV', 'II', 'DE', 'LA', 'DEL', 'VON', 'VAN', 'MC', 'MAC']
-            for word in words:
-                if not (word.isalpha() or word in valid_parts):
-                    print(f"      🔍 VALIDATION: '{name}' - NON-ALPHA: {word}")
-                    return False
+    #         # Check alphabetic characters
+    #         valid_parts = ['JR', 'SR', 'III', 'IV', 'II', 'DE', 'LA', 'DEL', 'VON', 'VAN', 'MC', 'MAC']
+    #         for word in words:
+    #             if not (word.isalpha() or word in valid_parts):
+    #                 print(f"      🔍 VALIDATION: '{name}' - NON-ALPHA: {word}")
+    #                 return False
             
-            # Check word lengths
-            for word in words:
-                if len(word) < 2 or len(word) > 15:
-                    print(f"      🔍 VALIDATION: '{name}' - BAD LENGTH: {word}")
-                    return False
+    #         # Check word lengths
+    #         for word in words:
+    #             if len(word) < 2 or len(word) > 15:
+    #                 print(f"      🔍 VALIDATION: '{name}' - BAD LENGTH: {word}")
+    #                 return False
             
-            # Check for vowels in short words (avoid acronyms)
-            for word in words:
-                if len(word) <= 3 and not any(vowel in word for vowel in 'AEIOU'):
-                    print(f"      🔍 VALIDATION: '{name}' - NO VOWELS: {word}")
-                    return False
+    #         # Check for vowels in short words (avoid acronyms)
+    #         for word in words:
+    #             if len(word) <= 3 and not any(vowel in word for vowel in 'AEIOU'):
+    #                 print(f"      🔍 VALIDATION: '{name}' - NO VOWELS: {word}")
+    #                 return False
             
-            # Comprehensive false positive list
-            false_positives = [
-                'ACCOUNT ENDING', 'CARD ENDING', 'CUSTOMER CARE', 'AMAZON BUSINESS',
-                'AMERICAN EXPRESS', 'PAYMENT TERMS', 'NEW CHARGES', 'TOTAL BALANCE',
-                'MINIMUM PAYMENT', 'INTEREST CHARGED', 'DETAIL CONTINUED', 'AMOUNT ENCLOSED',
-                'SERVICE STN', 'FAST FOOD', 'RESTAURANT', 'GAS STATION', 'AUTO PAY',
-                'GROCERY OUTLET', 'UNION', 'CHEVRON', 'SHELL OIL', 'MOBILE', 'ARCO',
-                'SAFEWAY', 'COSTCO', 'TARGET', 'WALMART', 'HOME DEPOT'
-            ]
+    #         # Comprehensive false positive list
+    #         false_positives = [
+    #             'ACCOUNT ENDING', 'CARD ENDING', 'CUSTOMER CARE', 'AMAZON BUSINESS',
+    #             'AMERICAN EXPRESS', 'PAYMENT TERMS', 'NEW CHARGES', 'TOTAL BALANCE',
+    #             'MINIMUM PAYMENT', 'INTEREST CHARGED', 'DETAIL CONTINUED', 'AMOUNT ENCLOSED',
+    #             'SERVICE STN', 'FAST FOOD', 'RESTAURANT', 'GAS STATION', 'AUTO PAY',
+    #             'GROCERY OUTLET', 'UNION', 'CHEVRON', 'SHELL OIL', 'MOBILE', 'ARCO',
+    #             'SAFEWAY', 'COSTCO', 'TARGET', 'WALMART', 'HOME DEPOT'
+    #         ]
             
-            for fp in false_positives:
-                if fp in name.upper():
-                    print(f"      🔍 VALIDATION: '{name}' - FALSE POSITIVE: {fp}")
-                    return False
+    #         for fp in false_positives:
+    #             if fp in name.upper():
+    #                 print(f"      🔍 VALIDATION: '{name}' - FALSE POSITIVE: {fp}")
+    #                 return False
             
-            # Business terms
-            business_terms = [
-                'STN', 'LLC', 'INC', 'CORP', 'LTD', 'CO', 'STORE', 'SHOP',
-                'MARKET', 'CENTER', 'DEPOT', 'STATION', 'FUEL', 'GAS', 'OIL'
-            ]
+    #         # Business terms
+    #         business_terms = [
+    #             'STN', 'LLC', 'INC', 'CORP', 'LTD', 'CO', 'STORE', 'SHOP',
+    #             'MARKET', 'CENTER', 'DEPOT', 'STATION', 'FUEL', 'GAS', 'OIL'
+    #         ]
             
-            for word in words:
-                if word in business_terms:
-                    print(f"      🔍 VALIDATION: '{name}' - BUSINESS TERM: {word}")
-                    return False
+    #         for word in words:
+    #             if word in business_terms:
+    #                 print(f"      🔍 VALIDATION: '{name}' - BUSINESS TERM: {word}")
+    #                 return False
             
-            print(f"      ✅ VALIDATION: '{name}' - PASSED")
-            return True
+    #         print(f"      ✅ VALIDATION: '{name}' - PASSED")
+    #         return True
             
-        except Exception as e:
-            print(f"      🚨 VALIDATION ERROR: {e}")
-            return False
+    #     except Exception as e:
+    #         print(f"      🚨 VALIDATION ERROR: {e}")
+    #         return False
 
     def create_excel_file(self, data, filename_base):
         """Create Excel file with names column"""
@@ -1729,41 +1729,41 @@ class UniversalPDFToExcelConverter:
             self.update_progress(f"❌ Error in create_excel_file", f"Error: {str(e)}")
             return False
 
-def show_completion_message(files_created, total_transactions):
-    """Show completion message using GUI"""
-    try:
-        import tkinter as tk
-        from tkinter import messagebox
+# def show_completion_message(files_created, total_transactions):
+#     """Show completion message using GUI"""
+#     try:
+#         import tkinter as tk
+#         from tkinter import messagebox
         
-        # Create a hidden root window
-        root = tk.Tk()
-        root.withdraw()
+#         # Create a hidden root window
+#         root = tk.Tk()
+#         root.withdraw()
         
-        # Show completion message
-        if files_created > 0:
-            message = f"✅ SUCCESS!\n\n" \
-                     f"Created {files_created} Excel file(s)\n" \
-                     f"Processed {total_transactions} transactions\n\n" \
-                     f"Check the 'Excel' folder for your results!"
-            title = "PDF to Excel Conversion - Complete"
-        else:
-            message = "⚠️ No Excel files were created.\n\n" \
-                     "Please check that your PDFs contain transaction data\n" \
-                     "and try again."
-            title = "PDF to Excel Conversion - No Data Found"
+#         # Show completion message
+#         if files_created > 0:
+#             message = f"✅ SUCCESS!\n\n" \
+#                      f"Created {files_created} Excel file(s)\n" \
+#                      f"Processed {total_transactions} transactions\n\n" \
+#                      f"Check the 'Excel' folder for your results!"
+#             title = "PDF to Excel Conversion - Complete"
+#         else:
+#             message = "⚠️ No Excel files were created.\n\n" \
+#                      "Please check that your PDFs contain transaction data\n" \
+#                      "and try again."
+#             title = "PDF to Excel Conversion - No Data Found"
         
-        messagebox.showinfo(title, message)
-        root.destroy()
+#         messagebox.showinfo(title, message)
+#         root.destroy()
         
-    except Exception:
-        # Fallback: console message
-        try:
-            if files_created > 0:
-                print(f"✅ SUCCESS! Created {files_created} Excel file(s), Processed {total_transactions} transactions")
-            else:
-                print("⚠️ No Excel files were created.")
-        except Exception:
-            pass
+#     except Exception:
+#         # Fallback: console message
+#         try:
+#             if files_created > 0:
+#                 print(f"✅ SUCCESS! Created {files_created} Excel file(s), Processed {total_transactions} transactions")
+#             else:
+#                 print("⚠️ No Excel files were created.")
+#         except Exception:
+#             pass
 
 def main():
     try:
