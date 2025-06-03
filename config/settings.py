@@ -225,3 +225,40 @@ def debug_paths():
     print(f"   Excel exists: {EXCEL_FOLDER_PATH.exists()}")
     print(f"   Logs exists: {LOGS_FOLDER_PATH.exists()}")
     print()
+
+# =============================================================================
+# STATEMENT TYPE DIRECTORY STRUCTURE
+# =============================================================================
+
+# Subdirectory names for different statement types
+AMEX_SUBDIRECTORY = "amex"
+CHASE_SUBDIRECTORY = "chase"
+PROCESSED_SUBDIRECTORY = "processed"  # Optional: for completed files
+
+# Supported statement types and their directories
+STATEMENT_DIRECTORIES = {
+    'amex': AMEX_SUBDIRECTORY,
+    'chase': CHASE_SUBDIRECTORY
+}
+
+# =============================================================================
+# UPDATED PATH FUNCTIONS
+# =============================================================================
+
+def get_amex_folder():
+    """Get the absolute path to the AmEx folder"""
+    return str(CONVERT_FOLDER_PATH / AMEX_SUBDIRECTORY)
+
+def get_chase_folder():
+    """Get the absolute path to the Chase folder"""
+    return str(CONVERT_FOLDER_PATH / CHASE_SUBDIRECTORY)
+
+def get_processed_folder():
+    """Get the absolute path to the processed folder"""
+    return str(CONVERT_FOLDER_PATH / PROCESSED_SUBDIRECTORY)
+
+def get_statement_folder(statement_type):
+    """Get the folder path for a specific statement type"""
+    if statement_type in STATEMENT_DIRECTORIES:
+        return str(CONVERT_FOLDER_PATH / STATEMENT_DIRECTORIES[statement_type])
+    return None

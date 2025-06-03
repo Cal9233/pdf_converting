@@ -1,0 +1,17 @@
+# PDF to Excel Converter Dependencies
+
+# Core PDF processing
+pdfplumber>=0.11.0
+
+# Data manipulation and Excel export
+pandas>=2.0.0
+openpyxl>=3.1.0
+
+# Build tool (optional - only needed for creating executables)
+pyinstaller>=6.0.0
+
+# Standard library modules (included with Python)
+# tkinter - GUI components
+# pathlib - Path handling
+# datetime - Date/time utilities
+# re - Regular expressions
