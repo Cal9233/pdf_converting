@@ -89,9 +89,7 @@ def main():
 if __name__ == "__main__":
     try:
         main()
-        input("\nPress Enter to exit...")  # Keep console open to see results
     except KeyboardInterrupt:
         print("\n🛑 Conversion cancelled by user")
     except Exception as e:
         print(f"\n💥 Fatal error: {e}")
-        input("Press Enter to exit...")

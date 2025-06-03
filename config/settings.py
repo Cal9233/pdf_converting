@@ -6,13 +6,35 @@ the application. Modify these values to customize the application behavior.
 """
 
 import os
+import sys
 from pathlib import Path
+
+# =============================================================================
+# PATH RESOLUTION FUNCTIONS
+# =============================================================================
+
+def get_application_root():
+    """
+    Get the application root directory - works for both development and executable.
+    
+    Returns:
+        Path: The root directory where Convert/Excel folders should be located
+    """
+    if getattr(sys, 'frozen', False):
+        # Running as executable (PyInstaller)
+        # Return the directory containing the executable
+        return Path(os.path.dirname(sys.executable))
+    else:
+        # Running as script in development
+        # We're in config/settings.py, need to go up 2 levels to project root
+        current_file = Path(__file__).resolve()
+        return current_file.parent.parent  # config/ -> project_root/
 
 # =============================================================================
 # FOLDER SETTINGS
 # =============================================================================
 
-# Default folder names
+# Default folder names (relative)
 DEFAULT_CONVERT_FOLDER = "Convert"
 DEFAULT_EXCEL_FOLDER = "Excel"
 DEFAULT_LOGS_FOLDER = "logs"
@@ -141,11 +163,65 @@ APP_VERSION = "1.0.0"
 APP_DESCRIPTION = "Convert PDF credit card statements to Excel format"
 
 # =============================================================================
-# FILE PATHS (Computed)
+# FILE PATHS (Computed at runtime)
 # =============================================================================
 
-# Get project root directory
-PROJECT_ROOT = Path(__file__).parent.parent
-CONVERT_FOLDER_PATH = PROJECT_ROOT / DEFAULT_CONVERT_FOLDER
-EXCEL_FOLDER_PATH = PROJECT_ROOT / DEFAULT_EXCEL_FOLDER
-LOGS_FOLDER_PATH = PROJECT_ROOT / DEFAULT_LOGS_FOLDER
+# Get application root directory (works for both development and executable)
+try:
+    PROJECT_ROOT = get_application_root()
+    CONVERT_FOLDER_PATH = PROJECT_ROOT / DEFAULT_CONVERT_FOLDER
+    EXCEL_FOLDER_PATH = PROJECT_ROOT / DEFAULT_EXCEL_FOLDER
+    LOGS_FOLDER_PATH = PROJECT_ROOT / DEFAULT_LOGS_FOLDER
+    
+    # Debug information (can be removed in production)
+    print(f"📁 Config initialized:")
+    print(f"   Project root: {PROJECT_ROOT}")
+    print(f"   Convert path: {CONVERT_FOLDER_PATH}")
+    print(f"   Excel path: {EXCEL_FOLDER_PATH}")
+    print(f"   Logs path: {LOGS_FOLDER_PATH}")
+    print(f"   Running as exe: {getattr(sys, 'frozen', False)}")
+    
+except Exception as e:
+    # Fallback to current directory if something goes wrong
+    print(f"⚠️  Warning: Could not determine project root ({e}), using current directory")
+    PROJECT_ROOT = Path.cwd()
+    CONVERT_FOLDER_PATH = PROJECT_ROOT / DEFAULT_CONVERT_FOLDER
+    EXCEL_FOLDER_PATH = PROJECT_ROOT / DEFAULT_EXCEL_FOLDER
+    LOGS_FOLDER_PATH = PROJECT_ROOT / DEFAULT_LOGS_FOLDER
+
+# =============================================================================
+# UTILITY FUNCTIONS
+# =============================================================================
+
+def get_convert_folder():
+    """Get the absolute path to the Convert folder"""
+    return str(CONVERT_FOLDER_PATH)
+
+def get_excel_folder():
+    """Get the absolute path to the Excel folder"""
+    return str(EXCEL_FOLDER_PATH)
+
+def get_logs_folder():
+    """Get the absolute path to the logs folder"""
+    return str(LOGS_FOLDER_PATH)
+
+def get_project_root():
+    """Get the absolute path to the project root"""
+    return str(PROJECT_ROOT)
+
+def debug_paths():
+    """Print debug information about all configured paths"""
+    print("\n🔍 Configuration Debug Info:")
+    print(f"   Running as executable: {getattr(sys, 'frozen', False)}")
+    print(f"   Config file location: {__file__}")
+    print(f"   Project root: {PROJECT_ROOT}")
+    print(f"   Convert folder: {CONVERT_FOLDER_PATH}")
+    print(f"   Excel folder: {EXCEL_FOLDER_PATH}")
+    print(f"   Logs folder: {LOGS_FOLDER_PATH}")
+    print(f"   Current working directory: {Path.cwd()}")
+    
+    # Check if folders exist
+    print(f"   Convert exists: {CONVERT_FOLDER_PATH.exists()}")
+    print(f"   Excel exists: {EXCEL_FOLDER_PATH.exists()}")
+    print(f"   Logs exists: {LOGS_FOLDER_PATH.exists()}")
+    print()

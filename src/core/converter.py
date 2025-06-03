@@ -14,7 +14,7 @@ from src.exporters import ExcelExporter
 from src.ui import ProgressWindow
 from src.core.folder_manager import FolderManager
 
-from config import (
+from config.settings import (
     AMEX_KEYWORDS,           # ['AMEX', 'AMERICAN', 'AMERICAN EXPRESS', 'AMAZON BUSINESS PRIME CARD']
     CHASE_KEYWORDS           # ['CHASE', 'ULTIMATE REWARDS', 'ACCOUNT ACTIVITY']
 )

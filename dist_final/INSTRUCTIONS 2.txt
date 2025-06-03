@@ -1,0 +1,8 @@
+PDF to Excel Converter - Instructions
+
+1. Put your PDF bank statements in the 'Convert' folder
+2. Double-click 'PDF_to_Excel_Converter.exe'  
+3. Wait for processing to complete
+4. Find Excel files in the 'Excel' folder
+
+Supports: American Express and Chase statements
