@@ -148,8 +148,14 @@ class UniversalPDFToExcelConverter:
                     parser = self.amex_parser
                 elif statement_type == 'chase':
                     parser = self.chase_parser
+                    # Extract primary account holder from address on page 1
+                    primary_name = parser.extract_primary_account_holder(full_text)
+                    parser.primary_account_holder = primary_name
+                    parser.current_cardholder = primary_name
                     # Extract date range for Chase statements
                     self.chase_date_range = parser.extract_chase_date_range(full_text)
+                    # Set the date range in the parser so it can use it
+                    parser.chase_date_range = self.chase_date_range
                 else:
                     return None, statement_type
                 
@@ -168,6 +174,10 @@ class UniversalPDFToExcelConverter:
                             extracted_data.extend(page_transactions)
                     except Exception as e:
                         continue
+                
+                # CHASE CLEANUP: Skip final cleanup since Chase parser handles sections properly
+                if statement_type == 'chase':
+                    print("✅ CHASE: Skipping final cleanup - section-based parsing already assigned names correctly")
                 
                 # Validation step
                 if extracted_data and statement_type != 'unknown':

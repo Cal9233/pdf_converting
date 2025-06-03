@@ -1,8 +1,16 @@
+"""
+AmEx statement parser for PDF to Excel Converter
+
+This module handles parsing of American Express PDF statements,
+including cardholder name detection and transaction extraction.
+"""
+
 import re
 from datetime import datetime
 from .base_parser import BaseParser
 from src.validators.name_validator import NameValidator
 from src.utils.date_utils import DateUtils
+
 
 class AmexParser(BaseParser):
     """Parser for American Express statements"""
@@ -10,17 +18,17 @@ class AmexParser(BaseParser):
     def __init__(self):
         super().__init__()
         self.name_validator = NameValidator()
-        self.global_current_cardholder = "Unknown"    
-
-    def parse_amex_page_global(self, page_text, page_num):
+        self.global_current_cardholder = "Unknown"
+    
+    def parse_page(self, page_text, page_num):
         """Parse AmEx page using global cardholder tracking"""
         transactions = []
         
-        print(f"\n📄 DEBUG: Starting page {page_num} with global cardholder: '{self.global_current_cardholder}'")
+        print(f"\n📄 DEBUG: Starting AmEx page {page_num} with global cardholder: '{self.global_current_cardholder}'")
         
         try:
             lines = page_text.split('\n')
-            print(f"📄 DEBUG: Page {page_num} has {len(lines)} lines")
+            print(f"📄 DEBUG: AmEx page {page_num} has {len(lines)} lines")
             
             for i, line in enumerate(lines):
                 try:
@@ -40,13 +48,13 @@ class AmexParser(BaseParser):
                         continue
                     
                     # Check for continuation headers - preserve current name
-                    if self.is_continuation_header(line):
+                    if self.name_validator.is_continuation_header(line):
                         print(f"📋 DEBUG: Continuation header on line {i+1}: '{line}'")
                         print(f"   🔄 PRESERVING global cardholder: '{self.global_current_cardholder}'")
                         continue
                     
                     # Check for new cardholder name
-                    cardholder_name = self.extract_cardholder_name(line)
+                    cardholder_name = self.name_validator.extract_cardholder_name(line)
                     if cardholder_name:
                         old_cardholder = self.global_current_cardholder
                         self.global_current_cardholder = cardholder_name
@@ -55,34 +63,36 @@ class AmexParser(BaseParser):
                         continue
                     
                     # Parse transaction
-                    transaction = self.parse_amex_transaction_line(line)
+                    transaction = self.parse_transaction_line(line)
                     if transaction:
                         # Use GLOBAL cardholder
                         transaction['Name'] = self.global_current_cardholder
                         transactions.append(transaction)
-                        print(f"💳 DEBUG: Transaction on line {i+1}")
+                        print(f"💳 DEBUG: AmEx transaction on line {i+1}")
                         print(f"   ASSIGNED TO: '{self.global_current_cardholder}'")
                         print(f"   TRANSACTION: {transaction['Date']} | {transaction['Merchant'][:30]}... | ${transaction['Amount']}")
                     else:
-                        # Show potential missed transactions
+                        # Show potential missed transactions (limit output)
                         if (len(line) > 15 and 
                             any(char.isdigit() for char in line) and 
                             ('$' in line or re.search(r'\d+\.\d{2}', line)) and
                             not any(skip in line.upper() for skip in ['TOTAL', 'BALANCE', 'PAYMENT', 'CREDIT'])):
-                            print(f"❓ DEBUG: Potential transaction not parsed on line {i+1}: '{line[:80]}...'")
+                            # Only show first few to avoid spam
+                            if len(transactions) < 3:
+                                print(f"❓ DEBUG: Potential AmEx transaction not parsed on line {i+1}: '{line[:80]}...'")
                 
                 except Exception as e:
-                    print(f"🚨 DEBUG: Error on line {i+1}: {e}")
+                    print(f"🚨 DEBUG: Error on AmEx line {i+1}: {e}")
                     continue
         
         except Exception as e:
-            print(f"🚨 DEBUG: Error parsing page {page_num}: {e}")
+            print(f"🚨 DEBUG: Error parsing AmEx page {page_num}: {e}")
         
-        print(f"📄 DEBUG: Page {page_num} completed - {len(transactions)} transactions")
-        print(f"📄 DEBUG: Global cardholder after page {page_num}: '{self.global_current_cardholder}'")
+        print(f"📄 DEBUG: AmEx page {page_num} completed - {len(transactions)} transactions")
+        print(f"📄 DEBUG: Global cardholder after AmEx page {page_num}: '{self.global_current_cardholder}'")
         return transactions
 
-    def parse_amex_transaction_line(self, line):
+    def parse_transaction_line(self, line):
         """Parse individual American Express transaction line"""
         try:
             # Step 1: Extract date (MM/DD or MM/DD/YY) from the beginning
@@ -113,13 +123,13 @@ class AmexParser(BaseParser):
                 return None  # Skip if amount can't be parsed
             
             # Step 4: Extract ONLY merchant name from the middle part
-            merchant_name = self.extract_merchant_name(merchant_and_location)
+            merchant_name = self.name_validator.extract_merchant_name(merchant_and_location)
             
             if not merchant_name or len(merchant_name) < 3:
                 return None
             
             # Step 5: Handle date conversion
-            full_date = self.convert_date(date_part)
+            full_date = DateUtils.convert_date(date_part)
             if not full_date:
                 return None
             
@@ -128,6 +138,6 @@ class AmexParser(BaseParser):
                 'Merchant': merchant_name,
                 'Amount': amount_str
             }
-
+        
         except Exception:
             return None

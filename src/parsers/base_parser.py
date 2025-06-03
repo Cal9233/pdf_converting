@@ -1,13 +1,19 @@
+"""
+Base parser class for PDF to Excel Converter
+
+This module provides the abstract base class for all statement parsers.
+"""
+
 import os
-import pdfplumber
 from abc import ABC, abstractmethod
+
 
 class BaseParser(ABC):
     """Abstract base class for all statement parsers"""
     
     def __init__(self):
         pass
-
+    
     def detect_statement_type(self, text, filename):
         """Detect if the PDF is American Express or Chase"""
         try:
@@ -29,8 +35,7 @@ class BaseParser(ABC):
                 return 'unknown'
         except Exception:
             return 'unknown'
-        
-
+    
     @abstractmethod
     def parse_page(self, page_text, page_num):
         """Parse a single page - must be implemented by subclasses"""

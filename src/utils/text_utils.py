@@ -1,4 +1,11 @@
+"""
+Text utility functions for PDF to Excel Converter
+
+This module provides text processing utilities for the converter.
+"""
+
 import re
+
 
 class TextUtils:
     """Utility functions for text processing"""
@@ -21,5 +28,5 @@ class TextUtils:
     @staticmethod
     def remove_special_characters(text, keep_chars=""):
         """Remove special characters except those specified"""
-        pattern = f"[^a-zA-Z0-9\s{re.escape(keep_chars)}]"
+        pattern = f"[^a-zA-Z0-9\\s{re.escape(keep_chars)}]"  # Fixed escape sequence
         return re.sub(pattern, '', text)
