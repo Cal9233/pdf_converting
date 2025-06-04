@@ -23,9 +23,16 @@ pdf_converting/
 ```
 
 ## Building the Executable
+
+### Windows:
 1. Install Python 3.8+
 2. Run: `BUILD.bat`
 3. Find your executable in `pdf_usb/`
+
+### Mac/Linux:
+1. Install Python 3.8+
+2. Run: `chmod +x build.sh && ./build.sh`
+3. Or run directly: `cd pdf_v2 && python run_converter.py`
 
 ## For End Users
 The `pdf_usb` folder contains everything needed:

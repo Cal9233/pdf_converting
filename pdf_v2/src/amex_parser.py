@@ -3,7 +3,7 @@
 import re
 from typing import Dict, List, Optional
 
-from src.transaction_parser import TransactionParser
+from .transaction_parser import TransactionParser
 
 
 class AmexParser(TransactionParser):

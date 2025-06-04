@@ -5,10 +5,17 @@ from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 import pdfplumber
 
-from config.settings import (
-    VALID_CARDHOLDERS, BUSINESS_INDICATORS, 
-    DATE_FORMATS, AMOUNT_PATTERN
-)
+try:
+    from config.settings import (
+        VALID_CARDHOLDERS, BUSINESS_INDICATORS, 
+        DATE_FORMATS, AMOUNT_PATTERN
+    )
+except ImportError:
+    # For when running as module
+    from ..config.settings import (
+        VALID_CARDHOLDERS, BUSINESS_INDICATORS, 
+        DATE_FORMATS, AMOUNT_PATTERN
+    )
 
 
 class TransactionParser:
