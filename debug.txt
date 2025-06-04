@@ -26,3 +26,16 @@
   2. Run the exe from Command Prompt to see any error messages:
   cd C:\your\folder\path
   PDF_to_Excel_Converter.exe
+
+
+  ///////Output////////
+  Traceback (most recent call last):
+  File "debug_converter.py", line 100, in <module>
+  File "debug_converter.py", line 96, in main
+RuntimeError: input(): lost sys.stdin
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "debug_converter.py", line 104, in <module>
+RuntimeError: input(): lost sys.stdin
