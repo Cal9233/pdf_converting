@@ -23,11 +23,12 @@ pip install openpyxl
 ```
 
 ### 3. Prepare the Build Directory
-1. Copy the entire `pdf_usb` folder to your Windows machine
+1. Copy the entire `pdf_v2` folder to your Windows machine
 2. The folder should contain:
    - `run_converter.py` (the main program)
-   - `Convert/` folder with subdirectories (amex/, chase/, w2/, other/)
-   - `Excel/` folder (for output)
+   - `pdf_to_excel_converter.py` (GUI version)
+   - `validate_exe_build.py` (validation script)
+   - `test_exe_paths.py` (path testing script)
 
 ### 4. Build the .exe
 1. Open Command Prompt
@@ -115,14 +116,52 @@ To share the program:
 
 ## Quick Build Script
 
-Save this as `build.bat` in the pdf_usb folder:
+Save this as `build.bat` in the pdf_v2 folder:
 ```batch
 @echo off
 echo Building PDF to Excel Converter...
-pyinstaller --onefile --name PDF_to_Excel_Converter --windowed run_converter.py
 echo.
-echo Build complete! Check the dist folder for the .exe
+echo Step 1: Running validation...
+python validate_exe_build.py
+echo.
+echo Step 2: Building standalone converter...
+pyinstaller --onefile --name PDF_to_Excel_Converter run_converter.py
+echo.
+echo Step 3: Building GUI converter...
+pyinstaller --onefile --name PDF_to_Excel_Converter_GUI --windowed pdf_to_excel_converter.py
+echo.
+echo Step 4: Building path test tool...
+pyinstaller --onefile --name test_exe_paths --windowed test_exe_paths.py
+echo.
+echo Build complete! Check the dist folder for:
+echo - PDF_to_Excel_Converter.exe (console version)
+echo - PDF_to_Excel_Converter_GUI.exe (GUI version)
+echo - test_exe_paths.exe (testing tool)
 pause
 ```
 
 Then just double-click `build.bat` to build automatically!
+
+## Important Notes About Paths
+
+⚠️ **CRITICAL**: The exe looks for Convert and Excel folders in the same directory as the exe file itself.
+
+Example working structure:
+```
+C:\Users\YourName\Desktop\PDF_Converter\
+├── PDF_to_Excel_Converter.exe    ← Your exe here
+├── Convert\                      ← Must be next to exe
+│   ├── amex\                    ← Put AmEx PDFs here
+│   ├── chase\                   ← Put Chase PDFs here
+│   ├── other\                   ← Put other PDFs here
+│   └── w2\                      ← Put W2 PDFs here
+└── Excel\                        ← Output files go here
+```
+
+The exe will NOT work if:
+- Convert folder is missing
+- Excel folder is missing
+- Folders are in the wrong location
+- You run the exe from a different directory
+
+Use `test_exe_paths.exe` to debug folder issues!

@@ -32,7 +32,14 @@ BUSINESS_INDICATORS = [
 
 class SimplePDFConverter:
     def __init__(self):
-        self.base_dir = os.path.dirname(os.path.abspath(__file__))
+        # For exe, use the directory where the exe is located
+        if getattr(sys, 'frozen', False):
+            # Running as compiled exe
+            self.base_dir = os.path.dirname(sys.executable)
+        else:
+            # Running as script
+            self.base_dir = os.path.dirname(os.path.abspath(__file__))
+            
         self.input_dir = os.path.join(self.base_dir, 'Convert')
         self.output_dir = os.path.join(self.base_dir, 'Excel')
         self.validation_errors = []
