@@ -1,0 +1,28 @@
+  Immediate Solutions:
+
+  Option 1: Use the Debug Version
+
+  1. Copy debug_converter.py to your Windows machine
+  2. Build it as an exe:
+  pyinstaller --onefile --name PDF_Converter_Debug debug_converter.py
+  3. Run this exe to see what's happening
+
+  Option 2: Rebuild with Latest Code
+
+  1. Copy the updated run_converter.py from the pdf_v2 folder
+  2. Build a new exe:
+  pyinstaller --onefile --name PDF_to_Excel_Converter run_converter.py
+
+  Option 3: Try the GUI Version
+
+  The GUI version shows a progress window so you'll see if it's running:
+  1. Copy pdf_to_excel_converter.py
+  2. Build as:
+  pyinstaller --onefile --name PDF_to_Excel_Converter --windowed pdf_to_excel_converter.py
+
+  Quick Test:
+
+  1. Put at least one PDF file in Convert/amex/ or Convert/chase/
+  2. Run the exe from Command Prompt to see any error messages:
+  cd C:\your\folder\path
+  PDF_to_Excel_Converter.exe
