@@ -81,30 +81,14 @@ class SimplePDFConverter:
         return None
     
     def clean_merchant(self, merchant):
-        """Clean merchant name - remove phone numbers, state codes, reference numbers."""
-        # Remove leading '& ' or '8 ' (common OCR errors from Older_program)
-        merchant = merchant.lstrip('& ')
-        merchant = merchant.lstrip('8 ')
+        """Clean merchant name - matching Older_program's chase_parser.py exactly."""
+        # Clean up merchant name
+        merchant_desc = re.sub(r'\s+', ' ', merchant)  # Consolidate spaces
+        merchant_desc = re.sub(r'\s+[A-Z]{2}$', '', merchant_desc)  # Remove state codes
+        merchant_desc = re.sub(r'\s+\d{3}-\d{3}-\d{4}$', '', merchant_desc)  # Remove phone numbers
+        merchant_desc = re.sub(r'\s+\d{10,}$', '', merchant_desc)  # Remove long numbers
         
-        # Remove extra spaces
-        merchant = ' '.join(merchant.split())
-        
-        # Remove location info (from new version)
-        merchant = re.sub(r'\s+\d{12,}.*$', '', merchant)
-        merchant = re.sub(r'\s+\d{3}[-.]?\d{3}[-.]?\d{4}.*$', '', merchant)
-        merchant = re.sub(r'\s+\w+\.\w+\.?\w*.*$', '', merchant)
-        
-        # Remove city/state (from new version)
-        cities = '(San Francisco|San Jose|San Bruno|San Mateo|Daly City|South San Fra|Burlingame|Vallejo|Oakland|Berkeley|Sacramento|Los Angeles|Las Vegas|West Hollywood)'
-        merchant = re.sub(rf'\s+{cities}.*$', '', merchant, flags=re.IGNORECASE)
-        merchant = re.sub(r'\s+[A-Z]{2}$', '', merchant)
-        
-        # Remove prefixes (combined from both versions)
-        for prefix in ['TST* ', 'TST*', 'SPO*', 'SQ *', 'SP * ', 'SP *']:
-            if merchant.startswith(prefix):
-                merchant = merchant[len(prefix):].strip()
-        
-        return merchant.strip()
+        return merchant_desc
     
     def fix_doubled_text(self, text):
         """Fix doubled characters in text (e.g., 'MMaannaaggee' -> 'Manage')."""
@@ -200,33 +184,92 @@ class SimplePDFConverter:
         
         return transactions
     
+    def extract_primary_account_holder(self, text):
+        """Extract the primary account holder from the mailing address on page 1."""
+        try:
+            lines = text.split('\n')
+            
+            # Look for address pattern: NAME followed by address lines
+            for i, line in enumerate(lines[:50]):  # Check first 50 lines (page 1)
+                line = line.strip()
+                
+                # Skip empty lines and obvious non-names
+                if len(line) < 5 or any(skip in line.upper() for skip in ['CHASE', 'ACCOUNT', 'STATEMENT', 'PAGE', 'DATE']):
+                    continue
+                
+                # Look for a potential name followed by address components
+                if i + 3 < len(lines):  # Make sure we have enough lines ahead
+                    next_line1 = lines[i + 1].strip()
+                    next_line2 = lines[i + 2].strip()
+                    next_line3 = lines[i + 3].strip()
+                    
+                    # Check if this looks like: NAME, COMPANY/ADDRESS, STREET, CITY STATE ZIP
+                    if (self.looks_like_person_name(line) and 
+                        self.looks_like_address_component(next_line2) and
+                        self.looks_like_city_state_zip(next_line3)):
+                        
+                        # Check if it's a valid cardholder
+                        name_upper = line.upper().strip()
+                        if name_upper in VALID_CARDHOLDERS:
+                            return name_upper
+            
+            return None
+            
+        except Exception as e:
+            return None
+    
+    def looks_like_person_name(self, line):
+        """Check if a line looks like a person's name."""
+        # Must be 2-4 words, mostly letters, not too long
+        words = line.split()
+        if len(words) < 2 or len(words) > 4:
+            return False
+        
+        # Check each word is mostly letters
+        for word in words:
+            if len(word) < 2 or not re.match(r'^[A-Za-z\-\'\.]+$', word):
+                return False
+        
+        # Avoid obvious business terms
+        business_terms = ['LLC', 'INC', 'CORP', 'ENTERPRISES', 'COMPANY', 'BUSINESS']
+        if any(term in line.upper() for term in business_terms):
+            return False
+            
+        return True
+    
+    def looks_like_address_component(self, line):
+        """Check if a line looks like a street address."""
+        # Should contain numbers and street-like words
+        has_number = bool(re.search(r'\d', line))
+        has_street_words = bool(re.search(r'\b(ST|STREET|AVE|AVENUE|RD|ROAD|BLVD|BOULEVARD|DR|DRIVE|LN|LANE|CT|COURT|WAY|PL|PLACE)\b', line.upper()))
+        return has_number or has_street_words or len(line.split()) >= 2
+    
+    def looks_like_city_state_zip(self, line):
+        """Check if a line looks like city, state, zip."""
+        # Should end with state and zip pattern: CA 94545-1802
+        return bool(re.search(r'[A-Z]{2}\s+\d{5}(-\d{4})?$', line))
+    
     def parse_chase_pdf(self, pdf_path):
         """Parse Chase PDF using Older_program logic with multiple cardholder support."""
         transactions = []
         validation_errors = []
-        primary_cardholder = 'LUIS RODRIGUEZ'  # Default primary
-        current_cardholder = primary_cardholder
+        primary_cardholder = None
+        current_cardholder = None
         
         with pdfplumber.open(pdf_path) as pdf:
-            # First, try to find primary cardholder from first page
+            # First, extract primary cardholder from first page address
             if pdf.pages:
                 text = pdf.pages[0].extract_text()
                 if text:
                     # Fix doubled text if needed
                     text = self.fix_doubled_text(text)
-                    lines = text.split('\n')
-                    
-                    # Look for cardholder in mailing address area (first 50 lines)
-                    for line in lines[:50]:
-                        line = line.strip().upper()
-                        # Check if line contains a valid cardholder name
-                        for valid_name in VALID_CARDHOLDERS:
-                            if valid_name in line:
-                                primary_cardholder = valid_name
-                                current_cardholder = valid_name
-                                break
-                        if primary_cardholder != 'LUIS RODRIGUEZ':
-                            break
+                    primary_cardholder = self.extract_primary_account_holder(text)
+            
+            # Use fallback if extraction failed
+            if not primary_cardholder:
+                primary_cardholder = 'LUIS RODRIGUEZ'
+            
+            current_cardholder = primary_cardholder
             
             # Process all pages
             for page_num, page in enumerate(pdf.pages):
@@ -240,8 +283,22 @@ class SimplePDFConverter:
                 lines = text.split('\n')
                 page_transactions = 0
                 
+                # Start each page with primary cardholder as default
+                default_name = primary_cardholder
+                
                 for i, line in enumerate(lines):
                     line_stripped = line.strip()
+                    
+                    # Skip headers and empty lines
+                    if len(line_stripped) < 5:
+                        continue
+                    if (('Date of' in line_stripped and 'Transaction' in line_stripped) or
+                        'Merchant Name' in line_stripped or
+                        'ACCOUNT ACTIVITY' in line_stripped or
+                        line_stripped.startswith('CHASE') or
+                        line_stripped.startswith('Page') or
+                        line_stripped.startswith('Customer Service')):
+                        continue
                     
                     # Pattern 1: Look for "TRANSACTIONS THIS CYCLE (CARD XXXX)" pattern
                     if 'TRANSACTIONS THIS CYCLE' in line.upper() and 'CARD' in line.upper():
@@ -250,6 +307,7 @@ class SimplePDFConverter:
                             prev_line = lines[i - 1].strip()
                             if prev_line.upper() in VALID_CARDHOLDERS:
                                 current_cardholder = prev_line.upper()
+                                default_name = current_cardholder
                                 continue
                     
                     # Pattern 2: Name and TRANSACTIONS THIS CYCLE on same line
@@ -259,6 +317,7 @@ class SimplePDFConverter:
                             potential_name = parts[0].strip().upper()
                             if potential_name in VALID_CARDHOLDERS:
                                 current_cardholder = potential_name
+                                default_name = current_cardholder
                                 continue
                     
                     # Pattern 3: Standalone cardholder names (2-4 words, all caps)
@@ -270,54 +329,51 @@ class SimplePDFConverter:
                             for j in range(i+1, min(i+8, len(lines))):
                                 if 'TRANSACTIONS THIS CYCLE' in lines[j].upper():
                                     current_cardholder = potential_name
+                                    default_name = current_cardholder
                                     break
                     
-                    # Parse transaction with flexible date pattern
-                    # Allow for 1 or 2 digit months and days
-                    if re.match(r'^(\d{1,2}/\d{1,2})', line_stripped):
-                        # Extract date
-                        date_match = re.match(r'^(\d{1,2}/\d{1,2})', line_stripped)
-                        if date_match:
-                            date_str = date_match.group(1)
-                            remaining = line_stripped[len(date_str):].strip()
+                    # Parse transaction with Chase format: MM/DD [&] MERCHANT_NAME LOCATION AMOUNT
+                    date_pattern = r'^(\d{1,2}/\d{1,2})\s*(&?)\s*(.+?)\s+([-]?\d{1,}(?:,\d{3})*\.\d{2})$'
+                    match = re.match(date_pattern, line_stripped)
+                    
+                    if match:
+                        date_str = match.group(1)
+                        # Skip the & in group(2)
+                        merchant = match.group(3).strip()
+                        amount_str = match.group(4)
+                        
+                        # Skip negative amounts (payments/credits)
+                        if amount_str.startswith('-'):
+                            continue
+                        
+                        # Skip payment lines
+                        if 'Payment Thank You' in merchant:
+                            continue
+                        
+                        # Parse amount
+                        try:
+                            amount = float(amount_str.replace(',', ''))
+                            if amount <= 0:
+                                continue
+                        except ValueError:
+                            continue
+                        
+                        # Format date
+                        try:
+                            # Normalize date format
+                            month, day = date_str.split('/')
+                            date_str_normalized = f"{int(month):02d}/{int(day):02d}/24"
+                            date = datetime.strptime(date_str_normalized, '%m/%d/%y').strftime('%m/%d/%Y')
                             
-                            # Extract amount (look for dollar amount at end)
-                            amount_match = re.search(r'([-]?\$?[\d,]+\.\d{2})\s*$', remaining)
-                            if amount_match:
-                                amount_str = amount_match.group(1)
-                                
-                                # Skip negative amounts (payments/credits)
-                                if amount_str.startswith('-'):
-                                    continue
-                                
-                                # Extract merchant (everything between date and amount)
-                                merchant_end = remaining.rfind(amount_str)
-                                if merchant_end > 0:
-                                    merchant = remaining[:merchant_end].strip()
-                                    
-                                    # Skip payment lines
-                                    if 'Payment Thank You' in merchant:
-                                        continue
-                                    
-                                    # Parse amount
-                                    amount = self.parse_amount(amount_str.replace('-', ''))
-                                    
-                                    if amount and amount > 0:
-                                        try:
-                                            # Normalize date format
-                                            month, day = date_str.split('/')
-                                            date_str_normalized = f"{int(month):02d}/{int(day):02d}/24"
-                                            date = datetime.strptime(date_str_normalized, '%m/%d/%y').strftime('%m/%d/%Y')
-                                            
-                                            transactions.append({
-                                                'Name': current_cardholder,
-                                                'Date': date,
-                                                'Merchant': self.clean_merchant(merchant),
-                                                'Amount': amount
-                                            })
-                                            page_transactions += 1
-                                        except Exception as e:
-                                            validation_errors.append(f"Date parsing error on page {page_num + 1}: {date_str} - {str(e)}")
+                            transactions.append({
+                                'Name': default_name,
+                                'Date': date,
+                                'Merchant': self.clean_merchant(merchant),
+                                'Amount': amount
+                            })
+                            page_transactions += 1
+                        except Exception as e:
+                            validation_errors.append(f"Date parsing error on page {page_num + 1}: {date_str} - {str(e)}")
                 
                 # Check if page had potential transactions but none were extracted
                 if page_transactions == 0 and any(re.match(r'^\d{1,2}/\d{1,2}', line) for line in lines):
@@ -638,7 +694,7 @@ class SimplePDFConverter:
                     # Save to Excel
                     df = pd.DataFrame(all_transactions)
                     df = df[['Name', 'Date', 'Merchant', 'Amount']]
-                    df = df.sort_values(['Name', 'Date'])
+                    # Don't sort - preserve original PDF order like Older_program does
                     
                     # Use fixed filename without timestamp
                     output_file = os.path.join(self.output_dir, f'{subdir}.xlsx')
